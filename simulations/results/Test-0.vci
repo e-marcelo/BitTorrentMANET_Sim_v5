@@ -1,0 +1,67 @@
+file 2415 1477627476                                            
+version 2
+run Test-0-20161027-23:04:31-16569
+attr configname Test
+attr datetime 20161027-23:04:31
+attr experiment Test
+attr inifile BasicConfig.ini
+attr iterationvars ""
+attr iterationvars2 $repetition=0
+attr measurement ""
+attr network BasicTopology
+attr processid 16569
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 0
+attr seedset 0
+param **.eth[*].mac.duplexMode true
+param **.eth[*].queueType "\"DropTailQueue\""
+param **.mac.controlBitrate 1000Mbps
+param **.swarmManager.remainingSeeders 0.3
+param **.tracker.numTcpApps 1
+param **.tracker.tcpApp[0].localPort 8082
+param **.tracker.tcpApp[0].typename "\"TCPEchoApp\""
+param *.peer[*].bitTorrentApp.bitTorrentClient.processingTimeHistogram "\"../simulations/hist_55bin.dat\""
+param *.peer[*].typename "\"Peer\""
+
+vector 62  BasicTopology.router.eth[0].queue.pauseQueue  queueLength:vector  ETV
+attr interpolationmode  sample-hold
+attr title  "queue length, vector"
+vector 66  BasicTopology.router.eth[0].queue.dataQueue  queueLength:vector  ETV
+attr interpolationmode  sample-hold
+attr title  "queue length, vector"
+vector 82  BasicTopology.router.eth[1].queue.pauseQueue  queueLength:vector  ETV
+attr interpolationmode  sample-hold
+attr title  "queue length, vector"
+vector 86  BasicTopology.router.eth[1].queue.dataQueue  queueLength:vector  ETV
+attr interpolationmode  sample-hold
+attr title  "queue length, vector"
+vector 102  BasicTopology.router.eth[2].queue.pauseQueue  queueLength:vector  ETV
+attr interpolationmode  sample-hold
+attr title  "queue length, vector"
+vector 106  BasicTopology.router.eth[2].queue.dataQueue  queueLength:vector  ETV
+attr interpolationmode  sample-hold
+attr title  "queue length, vector"
+vector 122  BasicTopology.router.eth[3].queue.pauseQueue  queueLength:vector  ETV
+attr interpolationmode  sample-hold
+attr title  "queue length, vector"
+vector 126  BasicTopology.router.eth[3].queue.dataQueue  queueLength:vector  ETV
+attr interpolationmode  sample-hold
+attr title  "queue length, vector"
+vector 150  BasicTopology.tracker.eth[0].queue.pauseQueue  queueLength:vector  ETV
+attr interpolationmode  sample-hold
+attr title  "queue length, vector"
+vector 154  BasicTopology.tracker.eth[0].queue.dataQueue  queueLength:vector  ETV
+attr interpolationmode  sample-hold
+attr title  "queue length, vector"
+62	2319 9 0 0 0 0 1 0 0 0 0
+66	2328 9 0 0 0 0 1 0 0 0 0
+82	2337 9 0 0 0 0 1 0 0 0 0
+86	2346 9 0 0 0 0 1 0 0 0 0
+102	2355 10 0 0 0 0 1 0 0 0 0
+106	2365 10 0 0 0 0 1 0 0 0 0
+122	2375 10 0 0 0 0 1 0 0 0 0
+126	2385 10 0 0 0 0 1 0 0 0 0
+150	2395 10 0 0 0 0 1 0 0 0 0
+154	2405 10 0 0 0 0 1 0 0 0 0
