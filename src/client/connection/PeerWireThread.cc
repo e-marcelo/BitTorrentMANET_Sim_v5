@@ -3,15 +3,15 @@
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program.  If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 #include <connection/PeerWireThread.h>
 #include <omnetpp.h>
@@ -40,7 +40,7 @@ std::string toStr(int i) {
 // Own methods
 PeerWireThread::PeerWireThread(int infoHash, int remotePeerId) :
     // initialize the state machines
-    connectionSm(*this), downloadSm(*this), uploadSm(*this),
+//    connectionSm(*this), downloadSm(*this), uploadSm(*this),
     // initialize the pointers to other objects
     btClient(NULL), choker(NULL), contentManager(NULL), //
     // initialize the connection parameters
@@ -87,12 +87,12 @@ void PeerWireThread::established() {
     L3Address remoteAddr = this->sock->getRemoteAddress();
     int localPort = this->sock->getLocalPort();
     int remotePort = this->sock->getRemotePort();
-
-    if (this->activeConnection) {
-        this->connectionSm.tcpActiveConnection();
-    } else {
-        this->connectionSm.tcpPassiveConnection();
-    }
+//
+//    if (this->activeConnection) {
+//        this->connectionSm.tcpActiveConnection();
+//    } else {
+//        this->connectionSm.tcpPassiveConnection();
+//    }
 }
 void PeerWireThread::failure(int code) {
 #ifdef DEBUG_MSG
@@ -293,119 +293,119 @@ void PeerWireThread::sendApplicationMessage(int id) {
     if (!this->busy) this->btClient->processNextThread();
 }
 void PeerWireThread::issueTransition(cMessage const* msg) { // get message Id
-    ApplicationMsg const* appMsg = dynamic_cast<ApplicationMsg const*>(msg);
-    PeerWireMsg const* pwMsg = dynamic_cast<PeerWireMsg const*>(msg);
-    this->lastEvent = simulation.getEventNumber();
-    int msgId;
-
-    if (appMsg) {
-        msgId = appMsg->getMessageId();
-    } else if (pwMsg) {
-        msgId = pwMsg->getMessageId();
-    } else {
-        // consume application message
-        delete msg;
-        msg = NULL;
-        throw std::logic_error("Wrong type of message");
-    }
-#ifdef DEBUG_MSG
-    std::string msgName = msg->getName();
-    std::string debugString = "Processing " + msgName;
-    this->printDebugMsg(debugString);
-#endif
-    try {
-        switch (msgId) {
-#define CONST_CAST(X) static_cast<X const&>(*msg)
-#define CASE_CONN( X , Y ) case X:\
-            this->connectionSm.Y;\
-            break
-#define CASE_DOWNLOAD( X , Y ) case X:\
-            this->connectionSm.incomingPeerWireMsg();\
-            this->downloadSm.Y;\
-            break
-#define CASE_APP_DOWNLOAD( X , Y ) case X:\
-            this->downloadSm.Y;\
-            break
-#define CASE_UPLOAD( X , Y ) case X:\
-            this->connectionSm.incomingPeerWireMsg();\
-            this->uploadSm.Y;\
-            break
-#define CASE_APP_UPLOAD( X , Y ) case X:\
-            this->uploadSm.Y;\
-            break
-
-        // connectionSm PeerWire transitions
-        CASE_CONN(PW_KEEP_ALIVE_MSG, incomingPeerWireMsg());
-        CASE_CONN(PW_HANDSHAKE_MSG, handshakeMsg(CONST_CAST(Handshake)));
-            // connectionSM Application transitions
-        CASE_CONN(APP_CLOSE, applicationClose());
-        CASE_CONN(APP_TCP_REMOTE_CLOSE, remoteClose());
-        CASE_CONN(APP_TCP_LOCAL_CLOSE, localClose());
-        CASE_CONN(APP_TCP_ACTIVE_CONNECTION, tcpActiveConnection());
-        CASE_CONN(APP_TCP_PASSIVE_CONNECTION, tcpPassiveConnection());
-            // connectionSM timers
-        CASE_CONN(APP_KEEP_ALIVE_TIMER, keepAliveTimer());
-        CASE_CONN(APP_TIMEOUT_TIMER, timeout());
-
-            // downloadSm PeerWire transitions
-        CASE_DOWNLOAD(PW_CHOKE_MSG, chokeMsg());
-        CASE_DOWNLOAD(PW_UNCHOKE_MSG, unchokeMsg());
-        CASE_DOWNLOAD(PW_HAVE_MSG, haveMsg(CONST_CAST(HaveMsg)));
-        CASE_DOWNLOAD(PW_BITFIELD_MSG, bitFieldMsg(CONST_CAST(BitFieldMsg)));
-        CASE_DOWNLOAD(PW_PIECE_MSG, pieceMsg(CONST_CAST(PieceMsg)));
-            // downloadSm Application transitions
-        CASE_APP_DOWNLOAD(APP_PEER_INTERESTING, peerInteresting());
-        CASE_APP_DOWNLOAD(APP_PEER_NOT_INTERESTING, peerNotInteresting());
-            // downloadSm timers
-        CASE_APP_DOWNLOAD(APP_DOWNLOAD_RATE_TIMER, downloadRateTimer());
-        CASE_APP_DOWNLOAD(APP_SNUBBED_TIMER, snubbedTimer());
-
-            // uploadSm PeerWire transitions
-        CASE_UPLOAD(PW_INTERESTED_MSG, interestedMsg());
-        CASE_UPLOAD(PW_NOT_INTERESTED_MSG, notInterestedMsg());
-        CASE_UPLOAD(PW_REQUEST_MSG, requestMsg(CONST_CAST(RequestMsg)));
-        CASE_UPLOAD(PW_CANCEL_MSG, cancelMsg(CONST_CAST(CancelMsg)));
-            // uploadSm Application transitions
-        CASE_APP_UPLOAD(APP_CHOKE_PEER, chokePeer());
-        CASE_APP_UPLOAD(APP_UNCHOKE_PEER, unchokePeer());
-        CASE_APP_UPLOAD(APP_SEND_PIECE_MSG, sendPieceMsg());
-            // uploadSm timers
-        CASE_APP_UPLOAD(APP_UPLOAD_RATE_TIMER, uploadRateTimer());
-
-#undef CONST_CAST
-#undef CASE_CONN
-#undef CASE_APP_CONN
-#undef CASE_DOWNLOAD
-#undef CASE_APP_DOWNLOAD
-#undef CASE_UPLOAD
-#undef CASE_APP_UPLOAD
-        }
-
-        delete msg;
-        msg = NULL; // consume the message
-    } catch (statemap::TransitionUndefinedException & e) {
-        delete msg;
-        msg = NULL; // consume the message
-
-        std::ostringstream out;
-        out << e.what();
-        out << " - Transition " << e.getTransition();
-        out << " in state " << e.getState();
-        throw cException(out.str().c_str());
-    } catch (statemap::StateUndefinedException &e) {
-        std::ostringstream out;
-        out << e.what();
-        out << " - Transition " << msg->getName();
-        out << " called";
-
-        delete msg;
-        msg = NULL;
-        throw cException(out.str().c_str());
-    } catch (std::invalid_argument &e) {
-        delete msg;
-        msg = NULL; // consume the message
-        throw std::logic_error("Passed wrong argument to the state machine.");
-    }
+//    ApplicationMsg const* appMsg = dynamic_cast<ApplicationMsg const*>(msg);
+//    PeerWireMsg const* pwMsg = dynamic_cast<PeerWireMsg const*>(msg);
+//    this->lastEvent = simulation.getEventNumber();
+//    int msgId;
+//
+//    if (appMsg) {
+//        msgId = appMsg->getMessageId();
+//    } else if (pwMsg) {
+//        msgId = pwMsg->getMessageId();
+//    } else {
+//        // consume application message
+//        delete msg;
+//        msg = NULL;
+//        throw std::logic_error("Wrong type of message");
+//    }
+//#ifdef DEBUG_MSG
+//    std::string msgName = msg->getName();
+//    std::string debugString = "Processing " + msgName;
+//    this->printDebugMsg(debugString);
+//#endif
+//    try {
+//        switch (msgId) {
+//#define CONST_CAST(X) static_cast<X const&>(*msg)
+//#define CASE_CONN( X , Y ) case X:\
+//            this->connectionSm.Y;\
+//            break
+//#define CASE_DOWNLOAD( X , Y ) case X:\
+//            this->connectionSm.incomingPeerWireMsg();\
+//            this->downloadSm.Y;\
+//            break
+//#define CASE_APP_DOWNLOAD( X , Y ) case X:\
+//            this->downloadSm.Y;\
+//            break
+//#define CASE_UPLOAD( X , Y ) case X:\
+//            this->connectionSm.incomingPeerWireMsg();\
+//            this->uploadSm.Y;\
+//            break
+//#define CASE_APP_UPLOAD( X , Y ) case X:\
+//            this->uploadSm.Y;\
+//            break
+//
+//        // connectionSm PeerWire transitions
+//        CASE_CONN(PW_KEEP_ALIVE_MSG, incomingPeerWireMsg());
+//        CASE_CONN(PW_HANDSHAKE_MSG, handshakeMsg(CONST_CAST(Handshake)));
+//            // connectionSM Application transitions
+//        CASE_CONN(APP_CLOSE, applicationClose());
+//        CASE_CONN(APP_TCP_REMOTE_CLOSE, remoteClose());
+//        CASE_CONN(APP_TCP_LOCAL_CLOSE, localClose());
+//        CASE_CONN(APP_TCP_ACTIVE_CONNECTION, tcpActiveConnection());
+//        CASE_CONN(APP_TCP_PASSIVE_CONNECTION, tcpPassiveConnection());
+//            // connectionSM timers
+//        CASE_CONN(APP_KEEP_ALIVE_TIMER, keepAliveTimer());
+//        CASE_CONN(APP_TIMEOUT_TIMER, timeout());
+//
+//            // downloadSm PeerWire transitions
+//        CASE_DOWNLOAD(PW_CHOKE_MSG, chokeMsg());
+//        CASE_DOWNLOAD(PW_UNCHOKE_MSG, unchokeMsg());
+//        CASE_DOWNLOAD(PW_HAVE_MSG, haveMsg(CONST_CAST(HaveMsg)));
+//        CASE_DOWNLOAD(PW_BITFIELD_MSG, bitFieldMsg(CONST_CAST(BitFieldMsg)));
+//        CASE_DOWNLOAD(PW_PIECE_MSG, pieceMsg(CONST_CAST(PieceMsg)));
+//            // downloadSm Application transitions
+//        CASE_APP_DOWNLOAD(APP_PEER_INTERESTING, peerInteresting());
+//        CASE_APP_DOWNLOAD(APP_PEER_NOT_INTERESTING, peerNotInteresting());
+//            // downloadSm timers
+//        CASE_APP_DOWNLOAD(APP_DOWNLOAD_RATE_TIMER, downloadRateTimer());
+//        CASE_APP_DOWNLOAD(APP_SNUBBED_TIMER, snubbedTimer());
+//
+//            // uploadSm PeerWire transitions
+//        CASE_UPLOAD(PW_INTERESTED_MSG, interestedMsg());
+//        CASE_UPLOAD(PW_NOT_INTERESTED_MSG, notInterestedMsg());
+//        CASE_UPLOAD(PW_REQUEST_MSG, requestMsg(CONST_CAST(RequestMsg)));
+//        CASE_UPLOAD(PW_CANCEL_MSG, cancelMsg(CONST_CAST(CancelMsg)));
+//            // uploadSm Application transitions
+//        CASE_APP_UPLOAD(APP_CHOKE_PEER, chokePeer());
+//        CASE_APP_UPLOAD(APP_UNCHOKE_PEER, unchokePeer());
+//        CASE_APP_UPLOAD(APP_SEND_PIECE_MSG, sendPieceMsg());
+//            // uploadSm timers
+//        CASE_APP_UPLOAD(APP_UPLOAD_RATE_TIMER, uploadRateTimer());
+//
+//#undef CONST_CAST
+//#undef CASE_CONN
+//#undef CASE_APP_CONN
+//#undef CASE_DOWNLOAD
+//#undef CASE_APP_DOWNLOAD
+//#undef CASE_UPLOAD
+//#undef CASE_APP_UPLOAD
+//        }
+//
+//        delete msg;
+//        msg = NULL; // consume the message
+//    } catch (statemap::TransitionUndefinedException & e) {
+//        delete msg;
+//        msg = NULL; // consume the message
+//
+//        std::ostringstream out;
+//        out << e.what();
+//        out << " - Transition " << e.getTransition();
+//        out << " in state " << e.getState();
+//        throw cException(out.str().c_str());
+//    } catch (statemap::StateUndefinedException &e) {
+//        std::ostringstream out;
+//        out << e.what();
+//        out << " - Transition " << msg->getName();
+//        out << " called";
+//
+//        delete msg;
+//        msg = NULL;
+//        throw cException(out.str().c_str());
+//    } catch (std::invalid_argument &e) {
+//        delete msg;
+//        msg = NULL; // consume the message
+//        throw std::logic_error("Passed wrong argument to the state machine.");
+//    }
 }
 void PeerWireThread::sendPeerWireMessage(cMessage * msg) {
     PeerWireMsgBundle * bundleMsg = dynamic_cast<PeerWireMsgBundle *>(msg);

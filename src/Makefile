@@ -1,12 +1,12 @@
 #
-# OMNeT++/OMNEST Makefile for BTM
+# OMNeT++/OMNEST Makefile for BitTorrentMANET_Sim_v5
 #
 # This file was generated with the command:
-#  opp_makemake -f --deep -I/root/smc_6_6_0/lib/C++ -I/root/boost_1_61_0 -I../../inet/src -I../../inet/src/inet/transportlayer/contract/tcp -I../../inet/src/inet/networklayer/common -I../../inet/src/inet/applications/tcpapp -L../../inet/out/$$\(CONFIGNAME\)/src -L../../inet/out/$$\(CONFIGNAME\) -lINET -linet -KINET_PROJ=../../inet
+#  opp_makemake -f --deep -I/root/smc_6_6_0/lib/C++ -I/root/boost_1_61_0 -I/home/distribuidos/omnetpp-5.0/samples/inet/src -I/home/distribuidos/omnetpp-5.0/samples/inet/src/inet/transportlayer/contract/tcp -I/home/distribuidos/omnetpp-5.0/samples/inet/src/inet/applications/tcpapp -I/home/distribuidos/omnetpp-5.0/samples/inet/src/inet/networklayer/common -L/home/distribuidos/omnetpp-5.0/samples/inet/out/$$\(CONFIGNAME\)/src -lINET -KINET_PROJ=/home/distribuidos/omnetpp-5.0/samples/inet
 #
 
 # Name of target to be created (-o option)
-TARGET = BTM$(EXE_SUFFIX)
+TARGET = BitTorrentMANET_Sim_v5$(EXE_SUFFIX)
 
 # User interface (uncomment one) (-u option)
 USERIF_LIBS = $(ALL_ENV_LIBS) # that is, $(TKENV_LIBS) $(QTENV_LIBS) $(CMDENV_LIBS)
@@ -18,17 +18,16 @@ USERIF_LIBS = $(ALL_ENV_LIBS) # that is, $(TKENV_LIBS) $(QTENV_LIBS) $(CMDENV_LI
 INCLUDE_PATH = \
     -I/root/smc_6_6_0/lib/C++ \
     -I/root/boost_1_61_0 \
-    -I../../inet/src \
-    -I../../inet/src/inet/transportlayer/contract/tcp \
-    -I../../inet/src/inet/networklayer/common \
-    -I../../inet/src/inet/applications/tcpapp \
+    -I$(INET_PROJ)/src \
+    -I$(INET_PROJ)/src/inet/transportlayer/contract/tcp \
+    -I$(INET_PROJ)/src/inet/applications/tcpapp \
+    -I$(INET_PROJ)/src/inet/networklayer/common \
     -I. \
     -Iclient \
     -Iclient/connection \
     -Iclient/messages \
     -Iclient/other \
-    -Iclient/smc \
-    -Iclient/smc/out \
+    -Icontroller \
     -Inodes \
     -Itracker \
     -Itracker/connection \
@@ -39,8 +38,8 @@ INCLUDE_PATH = \
 EXTRA_OBJS =
 
 # Additional libraries (-L, -l options)
-LIBS = -L../../inet/out/$(CONFIGNAME)/src -L../../inet/out/$(CONFIGNAME)  -lINET -linet
-LIBS += -Wl,-rpath,`abspath ../../inet/out/$(CONFIGNAME)/src` -Wl,-rpath,`abspath ../../inet/out/$(CONFIGNAME)`
+LIBS = -L$(INET_PROJ)/out/$(CONFIGNAME)/src  -lINET
+LIBS += -Wl,-rpath,`abspath $(INET_PROJ)/out/$(CONFIGNAME)/src`
 
 # Output directory
 PROJECT_OUTPUT_DIR = ../out
@@ -49,45 +48,40 @@ O = $(PROJECT_OUTPUT_DIR)/$(CONFIGNAME)/$(PROJECTRELATIVE_PATH)
 
 # Object files for local .cc, .msg and .sm files
 OBJS = \
-    $O/client/Choker.o \
-    $O/client/BitTorrentClient.o \
     $O/client/ContentManager.o \
+    $O/client/Choker.o \
     $O/client/SwarmManager.o \
+    $O/client/BitTorrentClient.o \
     $O/client/connection/PeerWireThread.o \
-    $O/client/other/BitField.o \
-    $O/client/other/DataRateRollingAverage.o \
-    $O/client/other/RarestPieceCounter.o \
     $O/client/other/PeerStatus.o \
+    $O/client/other/BitField.o \
+    $O/client/other/RarestPieceCounter.o \
+    $O/client/other/DataRateRollingAverage.o \
+    $O/controller/ClientController.o \
     $O/tracker/TrackerApp.o \
     $O/tracker/connection/PeerConnectionThread.o \
     $O/tracker/other/PeerInfo.o \
     $O/client/messages/UserCommand_m.o \
     $O/client/messages/PeerWireMsgBundle_m.o \
-    $O/client/messages/PeerWire_m.o \
     $O/client/messages/Application_m.o \
+    $O/client/messages/PeerWire_m.o \
     $O/tracker/messages/AnnounceResponseMsg_m.o \
-    $O/tracker/messages/AnnounceRequestMsg_m.o \
-    $O/client/smc/UploadSM_sm.o \
-    $O/client/smc/DownloadSM_sm.o \
-    $O/client/smc/ConnectionSM_sm.o
+    $O/tracker/messages/AnnounceRequestMsg_m.o
 
 # Message files
 MSGFILES = \
     client/messages/UserCommand.msg \
     client/messages/PeerWireMsgBundle.msg \
-    client/messages/PeerWire.msg \
     client/messages/Application.msg \
+    client/messages/PeerWire.msg \
     tracker/messages/AnnounceResponseMsg.msg \
     tracker/messages/AnnounceRequestMsg.msg
 
 # SM files
-SMFILES = \
-    client/smc/UploadSM.sm \
-    client/smc/DownloadSM.sm \
-    client/smc/ConnectionSM.sm
+SMFILES =
 
 # Other makefile variables (-K)
-INET_PROJ=../../inet
+INET_PROJ=/home/distribuidos/omnetpp-5.0/samples/inet
 
 #------------------------------------------------------------------------------
 
@@ -166,14 +160,13 @@ smheaders: $(SMFILES:.sm=_sm.h)
 clean:
 	$(qecho) Cleaning...
 	$(Q)-rm -rf $O
-	$(Q)-rm -f BTM BTM.exe libBTM.so libBTM.a libBTM.dll libBTM.dylib
+	$(Q)-rm -f BitTorrentMANET_Sim_v5 BitTorrentMANET_Sim_v5.exe libBitTorrentMANET_Sim_v5.so libBitTorrentMANET_Sim_v5.a libBitTorrentMANET_Sim_v5.dll libBitTorrentMANET_Sim_v5.dylib
 	$(Q)-rm -f ./*_m.cc ./*_m.h ./*_sm.cc ./*_sm.h
 	$(Q)-rm -f client/*_m.cc client/*_m.h client/*_sm.cc client/*_sm.h
 	$(Q)-rm -f client/connection/*_m.cc client/connection/*_m.h client/connection/*_sm.cc client/connection/*_sm.h
 	$(Q)-rm -f client/messages/*_m.cc client/messages/*_m.h client/messages/*_sm.cc client/messages/*_sm.h
 	$(Q)-rm -f client/other/*_m.cc client/other/*_m.h client/other/*_sm.cc client/other/*_sm.h
-	$(Q)-rm -f client/smc/*_m.cc client/smc/*_m.h client/smc/*_sm.cc client/smc/*_sm.h
-	$(Q)-rm -f client/smc/out/*_m.cc client/smc/out/*_m.h client/smc/out/*_sm.cc client/smc/out/*_sm.h
+	$(Q)-rm -f controller/*_m.cc controller/*_m.h controller/*_sm.cc controller/*_sm.h
 	$(Q)-rm -f nodes/*_m.cc nodes/*_m.h nodes/*_sm.cc nodes/*_sm.h
 	$(Q)-rm -f tracker/*_m.cc tracker/*_m.h tracker/*_sm.cc tracker/*_sm.h
 	$(Q)-rm -f tracker/connection/*_m.cc tracker/connection/*_m.h tracker/connection/*_sm.cc tracker/connection/*_sm.h
@@ -185,7 +178,7 @@ cleanall: clean
 
 depend:
 	$(qecho) Creating dependencies...
-	$(Q)$(MAKEDEPEND) $(INCLUDE_PATH) -f Makefile -P\$$O/ -- $(MSG_CC_FILES) $(SM_CC_FILES)  ./*.cc client/*.cc client/connection/*.cc client/messages/*.cc client/other/*.cc client/smc/*.cc client/smc/out/*.cc nodes/*.cc tracker/*.cc tracker/connection/*.cc tracker/messages/*.cc tracker/other/*.cc
+	$(Q)$(MAKEDEPEND) $(INCLUDE_PATH) -f Makefile -P\$$O/ -- $(MSG_CC_FILES) $(SM_CC_FILES)  ./*.cc client/*.cc client/connection/*.cc client/messages/*.cc client/other/*.cc controller/*.cc nodes/*.cc tracker/*.cc tracker/connection/*.cc tracker/messages/*.cc tracker/other/*.cc
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
 $O/client/BitTorrentClient.o: client/BitTorrentClient.cc \
@@ -201,9 +194,6 @@ $O/client/BitTorrentClient.o: client/BitTorrentClient.cc \
 	client/other/DataRateRollingAverage.h \
 	client/other/PeerStatus.h \
 	client/other/RarestPieceCounter.h \
-	client/smc/out/ConnectionSM_sm.h \
-	client/smc/out/DownloadSM_sm.h \
-	client/smc/out/UploadSM_sm.h \
 	$(INET_PROJ)/src/inet/applications/tcpapp/TCPSrvHostApp.h \
 	$(INET_PROJ)/src/inet/common/Compat.h \
 	$(INET_PROJ)/src/inet/common/INETDefs.h \
@@ -230,9 +220,6 @@ $O/client/Choker.o: client/Choker.cc \
 	client/other/BitField.h \
 	client/other/DataRateRollingAverage.h \
 	client/other/PeerStatus.h \
-	client/smc/out/ConnectionSM_sm.h \
-	client/smc/out/DownloadSM_sm.h \
-	client/smc/out/UploadSM_sm.h \
 	$(INET_PROJ)/src/inet/applications/tcpapp/TCPSrvHostApp.h \
 	$(INET_PROJ)/src/inet/common/Compat.h \
 	$(INET_PROJ)/src/inet/common/INETDefs.h \
@@ -259,9 +246,6 @@ $O/client/ContentManager.o: client/ContentManager.cc \
 	client/other/DataRateRollingAverage.h \
 	client/other/PeerStatus.h \
 	client/other/RarestPieceCounter.h \
-	client/smc/out/ConnectionSM_sm.h \
-	client/smc/out/DownloadSM_sm.h \
-	client/smc/out/UploadSM_sm.h \
 	$(INET_PROJ)/src/inet/applications/tcpapp/TCPSrvHostApp.h \
 	$(INET_PROJ)/src/inet/common/Compat.h \
 	$(INET_PROJ)/src/inet/common/INETDefs.h \
@@ -291,9 +275,6 @@ $O/client/connection/PeerWireThread.o: client/connection/PeerWireThread.cc \
 	client/other/DataRateRollingAverage.h \
 	client/other/PeerStatus.h \
 	client/other/RarestPieceCounter.h \
-	client/smc/out/ConnectionSM_sm.h \
-	client/smc/out/DownloadSM_sm.h \
-	client/smc/out/UploadSM_sm.h \
 	$(INET_PROJ)/src/inet/applications/tcpapp/TCPSrvHostApp.h \
 	$(INET_PROJ)/src/inet/common/Compat.h \
 	$(INET_PROJ)/src/inet/common/INETDefs.h \
@@ -353,9 +334,6 @@ $O/client/other/PeerStatus.o: client/other/PeerStatus.cc \
 	client/other/BitField.h \
 	client/other/DataRateRollingAverage.h \
 	client/other/PeerStatus.h \
-	client/smc/out/ConnectionSM_sm.h \
-	client/smc/out/DownloadSM_sm.h \
-	client/smc/out/UploadSM_sm.h \
 	$(INET_PROJ)/src/inet/applications/tcpapp/TCPSrvHostApp.h \
 	$(INET_PROJ)/src/inet/common/Compat.h \
 	$(INET_PROJ)/src/inet/common/INETDefs.h \
@@ -375,71 +353,15 @@ $O/client/other/PeerStatus.o: client/other/PeerStatus.cc \
 $O/client/other/RarestPieceCounter.o: client/other/RarestPieceCounter.cc \
 	client/other/BitField.h \
 	client/other/RarestPieceCounter.h
-$O/client/smc/ConnectionSM_sm.o: client/smc/ConnectionSM_sm.cc \
-	client/smc/ConnectionSM_sm.h \
-	client/smc/out/ConnectionSM_sm.h
-$O/client/smc/DownloadSM_sm.o: client/smc/DownloadSM_sm.cc \
-	client/smc/DownloadSM_sm.h \
-	client/smc/out/DownloadSM_sm.h
-$O/client/smc/UploadSM_sm.o: client/smc/UploadSM_sm.cc \
-	client/smc/UploadSM_sm.h \
-	client/smc/out/UploadSM_sm.h
-$O/client/smc/out/ConnectionSM_sm.o: client/smc/out/ConnectionSM_sm.cc \
-	client/connection/PeerWireThread.h \
-	client/messages/PeerWireMsgBundle_m.h \
-	client/messages/PeerWire_m.h \
+$O/controller/ClientController.o: controller/ClientController.cc \
+	client/SwarmManager.h \
+	client/messages/UserCommand_m.h \
 	client/other/BitField.h \
-	client/smc/out/ConnectionSM_sm.h \
-	client/smc/out/DownloadSM_sm.h \
-	client/smc/out/UploadSM_sm.h \
-	$(INET_PROJ)/src/inet/applications/tcpapp/TCPSrvHostApp.h \
-	$(INET_PROJ)/src/inet/common/Compat.h \
-	$(INET_PROJ)/src/inet/common/INETDefs.h \
-	$(INET_PROJ)/src/inet/common/InitStages.h \
-	$(INET_PROJ)/src/inet/common/lifecycle/ILifecycle.h \
-	$(INET_PROJ)/src/inet/common/lifecycle/LifecycleOperation.h \
-	$(INET_PROJ)/src/inet/features.h \
-	$(INET_PROJ)/src/inet/linklayer/common/MACAddress.h \
-	$(INET_PROJ)/src/inet/networklayer/common/L3Address.h \
-	$(INET_PROJ)/src/inet/networklayer/common/ModuleIdAddress.h \
-	$(INET_PROJ)/src/inet/networklayer/common/ModulePathAddress.h \
-	$(INET_PROJ)/src/inet/networklayer/contract/ipv4/IPv4Address.h \
-	$(INET_PROJ)/src/inet/networklayer/contract/ipv6/IPv6Address.h \
-	$(INET_PROJ)/src/inet/transportlayer/contract/tcp/TCPCommand_m.h \
-	$(INET_PROJ)/src/inet/transportlayer/contract/tcp/TCPSocket.h \
-	$(INET_PROJ)/src/inet/transportlayer/contract/tcp/TCPSocketMap.h
-$O/client/smc/out/DownloadSM_sm.o: client/smc/out/DownloadSM_sm.cc \
-	client/connection/PeerWireThread.h \
-	client/messages/PeerWireMsgBundle_m.h \
-	client/messages/PeerWire_m.h \
-	client/other/BitField.h \
-	client/smc/out/ConnectionSM_sm.h \
-	client/smc/out/DownloadSM_sm.h \
-	client/smc/out/UploadSM_sm.h \
-	$(INET_PROJ)/src/inet/applications/tcpapp/TCPSrvHostApp.h \
-	$(INET_PROJ)/src/inet/common/Compat.h \
-	$(INET_PROJ)/src/inet/common/INETDefs.h \
-	$(INET_PROJ)/src/inet/common/InitStages.h \
-	$(INET_PROJ)/src/inet/common/lifecycle/ILifecycle.h \
-	$(INET_PROJ)/src/inet/common/lifecycle/LifecycleOperation.h \
-	$(INET_PROJ)/src/inet/features.h \
-	$(INET_PROJ)/src/inet/linklayer/common/MACAddress.h \
-	$(INET_PROJ)/src/inet/networklayer/common/L3Address.h \
-	$(INET_PROJ)/src/inet/networklayer/common/ModuleIdAddress.h \
-	$(INET_PROJ)/src/inet/networklayer/common/ModulePathAddress.h \
-	$(INET_PROJ)/src/inet/networklayer/contract/ipv4/IPv4Address.h \
-	$(INET_PROJ)/src/inet/networklayer/contract/ipv6/IPv6Address.h \
-	$(INET_PROJ)/src/inet/transportlayer/contract/tcp/TCPCommand_m.h \
-	$(INET_PROJ)/src/inet/transportlayer/contract/tcp/TCPSocket.h \
-	$(INET_PROJ)/src/inet/transportlayer/contract/tcp/TCPSocketMap.h
-$O/client/smc/out/UploadSM_sm.o: client/smc/out/UploadSM_sm.cc \
-	client/connection/PeerWireThread.h \
-	client/messages/PeerWireMsgBundle_m.h \
-	client/messages/PeerWire_m.h \
-	client/other/BitField.h \
-	client/smc/out/ConnectionSM_sm.h \
-	client/smc/out/DownloadSM_sm.h \
-	client/smc/out/UploadSM_sm.h \
+	controller/ClientController.h \
+	tracker/TrackerApp.h \
+	tracker/messages/AnnounceRequestMsg_m.h \
+	tracker/messages/AnnounceResponseMsg_m.h \
+	tracker/other/PeerInfo.h \
 	$(INET_PROJ)/src/inet/applications/tcpapp/TCPSrvHostApp.h \
 	$(INET_PROJ)/src/inet/common/Compat.h \
 	$(INET_PROJ)/src/inet/common/INETDefs.h \

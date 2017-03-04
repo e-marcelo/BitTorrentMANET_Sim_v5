@@ -3,15 +3,15 @@
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program.  If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 #ifndef CLIENT_CONNECTION_PEERWIRETHREAD_H_
 #define CLIENT_CONNECTION_PEERWIRETHREAD_H_
@@ -36,9 +36,9 @@ using inet::L3Address;
 
 //[EAM]#include <cPacketQueue.h>
 //[EAM]#include <cpacketqueue.h>
-#include "client/smc/out/ConnectionSM_sm.h"
-#include "client/smc/out/DownloadSM_sm.h"
-#include "client/smc/out/UploadSM_sm.h"
+//#include "client/smc/out/ConnectionSM_sm.h"
+//#include "client/smc/out/DownloadSM_sm.h"
+//#include "client/smc/out/UploadSM_sm.h"
 
 #include "PeerWireMsgBundle_m.h"
 #include "PeerWire_m.h"
@@ -192,9 +192,9 @@ public:
 private:
     //!@name BitTorrent State Machines
     //@{
-    ConnectionSMContext connectionSm;
-    DownloadSMContext downloadSm;
-    UploadSMContext uploadSm;
+//    ConnectionSMContext connectionSm;
+//    DownloadSMContext downloadSm;
+//    UploadSMContext uploadSm;
     //@}
 
     //! Pointer to the host, cast to the BitTorrentClient class.

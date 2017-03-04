@@ -35,8 +35,8 @@ using inet::L3Address;
 //class PeerWireThread;
 //class SwarmManager;
 
-//class Choker;
-//class ContentManager;
+class Choker;
+class ContentManager;
 
 //! Vector of PeerStatus pointers.
 typedef std::vector<PeerStatus const*> PeerVector;

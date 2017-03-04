@@ -19,6 +19,8 @@ package btm.nodes;
 import btm.client.BitTorrentApp;
 
 import inet.common.packet.TCPDump;
+import inet.linklayer.contract.IWiredNic;
+import inet.linklayer.contract.IWirelessNic;
 import inet.linklayer.ethernet.EthernetInterface;
 import inet.networklayer.common.InterfaceTable;
 import inet.networklayer.ipv4.IPv4NetworkLayer;
@@ -27,12 +29,14 @@ import inet.transportlayer.tcp.TCP;
 import inet.applications.contract.IPingApp;
 import inet.common.packet.PcapRecorder;
 import inet.networklayer.contract.IRoutingTable;
+import inet.mobility.contract.IMobility;
+
 
 
 //
 // Peer module.
 //
-module Peer like PeerInterface
+module Peer
 {
     parameters:
         //@node();
@@ -40,16 +44,19 @@ module Peer like PeerInterface
         bool IPForward = default(false);
         int namid = default(-1);
         string routingFile = default("");
+        string mobilityType = default(numRadios > 0 ? "StationaryMobility" : "");
         string networkLayerType = default("IPv4NetworkLayer");
         string routingTableType = default("Ipv4RoutingTable");
         *.interfaceTableModule = default(absPath(".interfaceTable"));
         *.routingTableModule = default(routingTableType != "" ? absPath(".routingTable") : "");
         *.displayAddresses = false;
         int numPingApps = default(0);
-        @display("i=device/pc2");
+
+
+        @display("i=device/cellphone2");
 
     gates:
-        inout ethg;
+        input radioIn @directIn;
 
     submodules:
         interfaceTable: InterfaceTable {
@@ -78,21 +85,21 @@ module Peer like PeerInterface
                 proxyARP = false;
                 @display("p=163,230;q=queue");
         }
-        eth: EthernetInterface {
-            parameters:
-                @display("p=163,359,row,90;q=txQueue");
-            gates:
-        }
-        tcp1: TCP {
-            @display("p=103,37");
-        }
         tcpDump: TCPDump {
-            @display("p=30,320");
+            @display("p=60,315");
         }
         pcapRecorder: PcapRecorder {
-            @display("p=30,82");
+            @display("p=65,90");
         }
 
+        wlan0: <default("Ieee80211Nic")> like IWirelessNic {
+            @display("p=161,337");
+        }
+        // optional mobility module. Required only if wireless cards are present
+        mobility: <mobilityType> like IMobility if mobilityType != "" {
+            parameters:
+                @display("p=53,200");
+        }
     connections allowunconnected:
         // Connect application to TCP layer
         bitTorrentApp.tcpOut[0] --> tcp.appIn++;
@@ -103,8 +110,8 @@ module Peer like PeerInterface
         tcp.ipOut --> networkLayer.igmpIn;
         tcp.ipIn <-- networkLayer.igmpOut;
 
-        networkLayer.ifOut++ --> eth.upperLayerIn;
-        networkLayer.ifIn++ <-- eth.upperLayerOut;
+        radioIn --> wlan0.radioIn;
+        networkLayer.ifOut++ --> wlan0.upperLayerIn;
+        networkLayer.ifIn++ <-- wlan0.upperLayerOut;
 
-        eth.phys <--> ethg;
 }

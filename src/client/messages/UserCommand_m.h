@@ -160,7 +160,7 @@ class EnterSwarmCommand : public ::UserCommand
   protected:
     TorrentMetadata torrentMetadata;
     bool seeder;
-    IPvXAddress trackerAddress;
+//    IPvXAddress trackerAddress;
     int trackerPort;
 
   private:
@@ -185,9 +185,9 @@ class EnterSwarmCommand : public ::UserCommand
     virtual void setTorrentMetadata(const TorrentMetadata& torrentMetadata);
     virtual bool getSeeder() const;
     virtual void setSeeder(bool seeder);
-    virtual IPvXAddress& getTrackerAddress();
-    virtual const IPvXAddress& getTrackerAddress() const {return const_cast<EnterSwarmCommand*>(this)->getTrackerAddress();}
-    virtual void setTrackerAddress(const IPvXAddress& trackerAddress);
+//    virtual IPvXAddress& getTrackerAddress();
+//    virtual const IPvXAddress& getTrackerAddress() const {return const_cast<EnterSwarmCommand*>(this)->getTrackerAddress();}
+//    virtual void setTrackerAddress(const IPvXAddress& trackerAddress);
     virtual int getTrackerPort() const;
     virtual void setTrackerPort(int trackerPort);
 };
