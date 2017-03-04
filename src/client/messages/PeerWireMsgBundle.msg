@@ -71,7 +71,8 @@ cplusplus {{
 // JURISDICTIONS DO NOT ALLOW THE EXCLUSION OF IMPLIED WARRANTIES, SO THIS
 // EXCLUSION MAY NOT APPLY TO YOU.
 
-#include <cpacketqueue.h>
+//#include <cpacketqueue.h>
+using omnetpp::cPacketQueue;
 #include "PeerWire_m.h"
 
 typedef cPacketQueue* cPacketQueuePtr;

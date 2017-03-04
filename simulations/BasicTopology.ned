@@ -1,6 +1,7 @@
 
 package btm.simulations;
-
+package btm.controller;
+import btm.controller.ClientController;
 import inet.networklayer.configurator.ipv4.IPv4NetworkConfigurator;
 import inet.routing.contract.IPIMRouting;
 import btm.nodes.PeerInterface;
@@ -52,6 +53,10 @@ network BasicTopology extends BasicNetwork
         radioMedium: Ieee80211ScalarRadioMedium {
             parameters:
                 @display("p=0,9");
+        }
+
+        clientController: ClientController {
+            @display("p=38.152,40.16");
         }
     connections:
 }

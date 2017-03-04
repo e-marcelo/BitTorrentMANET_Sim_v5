@@ -19,10 +19,35 @@ Define_Module(SwarmManager);
 
 void SwarmManager::initialize()
 {
-    // TODO - Generated method body
+    cModule *bitTorrentClient = getParentModule()->getSubmodule("bitTorrentClient");
+    if(bitTorrentClient == NULL){
+        std::cerr << "BitTorrentClient module not found\n";
+    }else{
+        this->bitTorrentClient = check_and_cast<BitTorrentClient *>(bitTorrentClient);
+        //Identificador del nodo
+        this->localPeerId = this->getParentModule()->getId();
+    }
+
 }
 
 void SwarmManager::handleMessage(cMessage *msg)
 {
-    // TODO - Generated method body
+    if(msg->arrivedOn("userCommand")){
+        treatUser(msg);
+    }
+}
+
+void SwarmManager::treatUser(cMessage* msg) {
+
+    switch(msg->getKind()){
+        case 0://Semilla
+            std::cerr << "Hola soy semilla :: "<< this->localPeerId <<"\n";
+            break;
+        case 1://Sanguijuela
+            std::cerr << "Hola soy sanguijuela :: "<< this->localPeerId <<"\n";
+            break;
+        default:
+            std::cerr << "Comando no encontrado!\n";
+    }
+
 }

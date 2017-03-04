@@ -17,7 +17,7 @@
 #define __BTM_SWARMMANAGER_H_
 
 #include <omnetpp.h>
-
+#include "BitTorrentClient.h"
 using namespace omnetpp;
 
 /**
@@ -25,6 +25,11 @@ using namespace omnetpp;
  */
 class SwarmManager : public cSimpleModule
 {
+  public:
+    void treatUser(cMessage *msg);
+  private:
+    BitTorrentClient* bitTorrentClient;
+    int localPeerId;
   protected:
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);

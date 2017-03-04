@@ -89,12 +89,12 @@
 // EXCLUSION MAY NOT APPLY TO YOU.
 
 #include "TrackerApp.h"
-using inet::IPv4Address;
-//#include <IPvXAddress.h>
+//#include <L3Address.h>
+using inet::L3Address;
 // }}
 
 /**
- * Enum generated from <tt>client/messages/UserCommand.msg:81</tt> by nedtool.
+ * Enum generated from <tt>client/messages/UserCommand.msg:83</tt> by nedtool.
  * <pre>
  * enum UserCommandKind
  * {
@@ -110,7 +110,7 @@ enum UserCommandKind {
 };
 
 /**
- * Class generated from <tt>client/messages/UserCommand.msg:86</tt> by nedtool.
+ * Class generated from <tt>client/messages/UserCommand.msg:88</tt> by nedtool.
  * <pre>
  * class UserCommand
  * {
@@ -144,13 +144,13 @@ inline void doParsimPacking(omnetpp::cCommBuffer *b, const UserCommand& obj) {ob
 inline void doParsimUnpacking(omnetpp::cCommBuffer *b, UserCommand& obj) {obj.parsimUnpack(b);}
 
 /**
- * Class generated from <tt>client/messages/UserCommand.msg:89</tt> by nedtool.
+ * Class generated from <tt>client/messages/UserCommand.msg:91</tt> by nedtool.
  * <pre>
  * class EnterSwarmCommand extends UserCommand
  * {
  *     TorrentMetadata torrentMetadata;
  *     bool seeder;
- *     IPvXAddress trackerAddress;
+ *     L3Address trackerAddress;
  *     int trackerPort;
  * }
  * </pre>
@@ -160,7 +160,7 @@ class EnterSwarmCommand : public ::UserCommand
   protected:
     TorrentMetadata torrentMetadata;
     bool seeder;
-//    IPvXAddress trackerAddress;
+    L3Address trackerAddress;
     int trackerPort;
 
   private:
@@ -185,9 +185,9 @@ class EnterSwarmCommand : public ::UserCommand
     virtual void setTorrentMetadata(const TorrentMetadata& torrentMetadata);
     virtual bool getSeeder() const;
     virtual void setSeeder(bool seeder);
-//    virtual IPvXAddress& getTrackerAddress();
-//    virtual const IPvXAddress& getTrackerAddress() const {return const_cast<EnterSwarmCommand*>(this)->getTrackerAddress();}
-//    virtual void setTrackerAddress(const IPvXAddress& trackerAddress);
+    virtual L3Address& getTrackerAddress();
+    virtual const L3Address& getTrackerAddress() const {return const_cast<EnterSwarmCommand*>(this)->getTrackerAddress();}
+    virtual void setTrackerAddress(const L3Address& trackerAddress);
     virtual int getTrackerPort() const;
     virtual void setTrackerPort(int trackerPort);
 };
@@ -196,7 +196,7 @@ inline void doParsimPacking(omnetpp::cCommBuffer *b, const EnterSwarmCommand& ob
 inline void doParsimUnpacking(omnetpp::cCommBuffer *b, EnterSwarmCommand& obj) {obj.parsimUnpack(b);}
 
 /**
- * Class generated from <tt>client/messages/UserCommand.msg:96</tt> by nedtool.
+ * Class generated from <tt>client/messages/UserCommand.msg:98</tt> by nedtool.
  * <pre>
  * class LeaveSwarmCommand extends UserCommand
  * {

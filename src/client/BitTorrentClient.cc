@@ -58,7 +58,7 @@ void BitTorrentClient::initialize(int stage)
 //    // create a listening connection
 //    TCPSrvHostApp::initialized();
 //    //this->swarmManager = check_and_cast<SwarmManager*>(getParentModule()->getSubmodule("swarmManager"));
-//    this->localPeerId = this->getParentModule()->getParentModule()->getId();
+      this->localPeerId = this->getParentModule()->getParentModule()->getId();
 //
 //    // get parameters from the modules
 //    this->snubbedInterval = par("snubbedInterval");

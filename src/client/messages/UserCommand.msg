@@ -72,11 +72,13 @@ cplusplus {{
 // EXCLUSION MAY NOT APPLY TO YOU.
 
 #include "TrackerApp.h"
-#include <IPvXAddress.h>
+//#include <L3Address.h>
+using inet::L3Address;
+
 }}
 
 class noncobject TorrentMetadata;
-class noncobject IPvXAddress;
+class noncobject L3Address;
 
 enum UserCommandKind {
     USER_COMMAND_ENTER_SWARM = 0;
@@ -89,7 +91,7 @@ class UserCommand {
 class EnterSwarmCommand extends UserCommand {
     TorrentMetadata torrentMetadata;
     bool seeder;
-    IPvXAddress trackerAddress;
+    L3Address trackerAddress;
     int trackerPort;
 }
 

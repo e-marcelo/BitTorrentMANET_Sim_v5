@@ -13,20 +13,43 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // 
 
-#ifndef __BITTORRENTMANET_SIM_V5_CLIENTCONTROLLER_H_
-#define __BITTORRENTMANET_SIM_V5_CLIENTCONTROLLER_H_
-
+#ifndef __BITTORRENT_CLIENTCONTROLLER_H_
+#define __BITTORRENT_CLIENTCONTROLLER_H_
 #include <omnetpp.h>
+#include <cstdint>
 
-using omnetpp::cListener;
-
-
+using namespace omnetpp;
+//#include <cListener.h>
 #include <list>
+using omnetpp::cListener;
+using omnetpp::cMessage;
+using omnetpp::simtime_t;
+using omnetpp::cComponent;
+using omnetpp::exponential;
 
-#include "TrackerApp.h"
+//[EAM]#include <cXMLElement.h>
+using omnetpp::cXMLElement;
+#include <cstring>
+#include <boost/lexical_cast.hpp>
+//[EAM]#include <cTopology.h>
+using omnetpp::cTopology;
+//[EAM]#include "TrackerApp.h"
+//[EAM]using namespace inet;
+#include <L3Address.h>
+#include <L3AddressResolver.h>
+using inet::L3Address;
+using inet::L3AddressResolver;
 
 class SwarmManager;
 
+
+/*[EAM]Archivo del torrente
+struct TorrentMetadata {
+    int numOfPieces;
+    int numOfSubPieces;
+    int subPieceSize;
+    int infoHash;
+};*/
 /**
  * This module is responsible for controlling the Client's behavior: what content
  * to download, when to start downloading, how long should the seeding time be.
@@ -42,19 +65,15 @@ public:
 private:
     //! Set to true to print debug messages
     bool debugFlag;
-    int endPeerDownload;
-    int numNodesTotal;
-
     //!@name Signals
     //@{
     simsignal_t enterTime_Signal; //! Emitted the instant a peer enters the swarm
+    int counter;
     //@}
 private:
-    void endUserDownload(cMessage * msg);
     /*! Return the torrent metadata for the passed content. Must be called after
      * init stage 0.
-     */
-    TorrentMetadata getTorrentMetadata(const char* content);
+     */ //TorrentMetadata getTorrentMetadata(const char* content);
 
     //! Print a debug message to clog.
     void printDebugMsg(std::string s);
@@ -65,7 +84,7 @@ private:
     void subscribeToSignals();
     //@}
 protected:
-    int numInitStages() const;
+    int numInitStages() const; //Note const in the numInitStages() declaration. If you forget it, by C++ rules you create a different function instead of redefining the existing one in the base class, thus the existing one will remain in effect and return 1.
     virtual void initialize(int stage);
     virtual void handleMessage(cMessage *msg);
 };

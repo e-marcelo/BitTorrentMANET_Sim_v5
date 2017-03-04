@@ -2,7 +2,7 @@
 # OMNeT++/OMNEST Makefile for BitTorrentMANET_Sim_v5
 #
 # This file was generated with the command:
-#  opp_makemake -f --deep -I/root/smc_6_6_0/lib/C++ -I/root/boost_1_61_0 -I/home/distribuidos/omnetpp-5.0/samples/inet/src -I/home/distribuidos/omnetpp-5.0/samples/inet/src/inet/transportlayer/contract/tcp -I/home/distribuidos/omnetpp-5.0/samples/inet/src/inet/applications/tcpapp -I/home/distribuidos/omnetpp-5.0/samples/inet/src/inet/networklayer/common -L/home/distribuidos/omnetpp-5.0/samples/inet/out/$$\(CONFIGNAME\)/src -lINET -KINET_PROJ=/home/distribuidos/omnetpp-5.0/samples/inet
+#  opp_makemake -f --deep -I/root/smc_6_6_0/lib/C++ -I/root/boost_1_61_0 -I../../inet/src -I../../inet/src/inet/transportlayer/contract/tcp -I../../inet/src/inet/networklayer/common -I../../inet/src/inet/applications/tcpapp -L../../inet/out/$$\(CONFIGNAME\)/src -L../../inet/out/$$\(CONFIGNAME\) -lINET -linet -KINET_PROJ=../../inet
 #
 
 # Name of target to be created (-o option)
@@ -18,10 +18,10 @@ USERIF_LIBS = $(ALL_ENV_LIBS) # that is, $(TKENV_LIBS) $(QTENV_LIBS) $(CMDENV_LI
 INCLUDE_PATH = \
     -I/root/smc_6_6_0/lib/C++ \
     -I/root/boost_1_61_0 \
-    -I$(INET_PROJ)/src \
-    -I$(INET_PROJ)/src/inet/transportlayer/contract/tcp \
-    -I$(INET_PROJ)/src/inet/applications/tcpapp \
-    -I$(INET_PROJ)/src/inet/networklayer/common \
+    -I../../inet/src \
+    -I../../inet/src/inet/transportlayer/contract/tcp \
+    -I../../inet/src/inet/networklayer/common \
+    -I../../inet/src/inet/applications/tcpapp \
     -I. \
     -Iclient \
     -Iclient/connection \
@@ -38,8 +38,8 @@ INCLUDE_PATH = \
 EXTRA_OBJS =
 
 # Additional libraries (-L, -l options)
-LIBS = -L$(INET_PROJ)/out/$(CONFIGNAME)/src  -lINET
-LIBS += -Wl,-rpath,`abspath $(INET_PROJ)/out/$(CONFIGNAME)/src`
+LIBS = -L../../inet/out/$(CONFIGNAME)/src -L../../inet/out/$(CONFIGNAME)  -lINET -linet
+LIBS += -Wl,-rpath,`abspath ../../inet/out/$(CONFIGNAME)/src` -Wl,-rpath,`abspath ../../inet/out/$(CONFIGNAME)`
 
 # Output directory
 PROJECT_OUTPUT_DIR = ../out
@@ -48,23 +48,23 @@ O = $(PROJECT_OUTPUT_DIR)/$(CONFIGNAME)/$(PROJECTRELATIVE_PATH)
 
 # Object files for local .cc, .msg and .sm files
 OBJS = \
-    $O/client/ContentManager.o \
     $O/client/Choker.o \
-    $O/client/SwarmManager.o \
     $O/client/BitTorrentClient.o \
+    $O/client/ContentManager.o \
+    $O/client/SwarmManager.o \
     $O/client/connection/PeerWireThread.o \
-    $O/client/other/PeerStatus.o \
     $O/client/other/BitField.o \
-    $O/client/other/RarestPieceCounter.o \
     $O/client/other/DataRateRollingAverage.o \
+    $O/client/other/RarestPieceCounter.o \
+    $O/client/other/PeerStatus.o \
     $O/controller/ClientController.o \
     $O/tracker/TrackerApp.o \
     $O/tracker/connection/PeerConnectionThread.o \
     $O/tracker/other/PeerInfo.o \
     $O/client/messages/UserCommand_m.o \
     $O/client/messages/PeerWireMsgBundle_m.o \
-    $O/client/messages/Application_m.o \
     $O/client/messages/PeerWire_m.o \
+    $O/client/messages/Application_m.o \
     $O/tracker/messages/AnnounceResponseMsg_m.o \
     $O/tracker/messages/AnnounceRequestMsg_m.o
 
@@ -72,8 +72,8 @@ OBJS = \
 MSGFILES = \
     client/messages/UserCommand.msg \
     client/messages/PeerWireMsgBundle.msg \
-    client/messages/Application.msg \
     client/messages/PeerWire.msg \
+    client/messages/Application.msg \
     tracker/messages/AnnounceResponseMsg.msg \
     tracker/messages/AnnounceRequestMsg.msg
 
@@ -81,7 +81,7 @@ MSGFILES = \
 SMFILES =
 
 # Other makefile variables (-K)
-INET_PROJ=/home/distribuidos/omnetpp-5.0/samples/inet
+INET_PROJ=../../inet
 
 #------------------------------------------------------------------------------
 
@@ -263,7 +263,30 @@ $O/client/ContentManager.o: client/ContentManager.cc \
 	$(INET_PROJ)/src/inet/transportlayer/contract/tcp/TCPSocket.h \
 	$(INET_PROJ)/src/inet/transportlayer/contract/tcp/TCPSocketMap.h
 $O/client/SwarmManager.o: client/SwarmManager.cc \
-	client/SwarmManager.h
+	client/BitTorrentClient.h \
+	client/SwarmManager.h \
+	client/connection/PeerWireThread.h \
+	client/messages/PeerWireMsgBundle_m.h \
+	client/messages/PeerWire_m.h \
+	client/other/BitField.h \
+	client/other/DataRateRollingAverage.h \
+	client/other/PeerStatus.h \
+	$(INET_PROJ)/src/inet/applications/tcpapp/TCPSrvHostApp.h \
+	$(INET_PROJ)/src/inet/common/Compat.h \
+	$(INET_PROJ)/src/inet/common/INETDefs.h \
+	$(INET_PROJ)/src/inet/common/InitStages.h \
+	$(INET_PROJ)/src/inet/common/lifecycle/ILifecycle.h \
+	$(INET_PROJ)/src/inet/common/lifecycle/LifecycleOperation.h \
+	$(INET_PROJ)/src/inet/features.h \
+	$(INET_PROJ)/src/inet/linklayer/common/MACAddress.h \
+	$(INET_PROJ)/src/inet/networklayer/common/L3Address.h \
+	$(INET_PROJ)/src/inet/networklayer/common/ModuleIdAddress.h \
+	$(INET_PROJ)/src/inet/networklayer/common/ModulePathAddress.h \
+	$(INET_PROJ)/src/inet/networklayer/contract/ipv4/IPv4Address.h \
+	$(INET_PROJ)/src/inet/networklayer/contract/ipv6/IPv6Address.h \
+	$(INET_PROJ)/src/inet/transportlayer/contract/tcp/TCPCommand_m.h \
+	$(INET_PROJ)/src/inet/transportlayer/contract/tcp/TCPSocket.h \
+	$(INET_PROJ)/src/inet/transportlayer/contract/tcp/TCPSocketMap.h
 $O/client/connection/PeerWireThread.o: client/connection/PeerWireThread.cc \
 	client/BitTorrentClient.h \
 	client/ContentManager.h \
@@ -354,7 +377,6 @@ $O/client/other/RarestPieceCounter.o: client/other/RarestPieceCounter.cc \
 	client/other/BitField.h \
 	client/other/RarestPieceCounter.h
 $O/controller/ClientController.o: controller/ClientController.cc \
-	client/SwarmManager.h \
 	client/messages/UserCommand_m.h \
 	client/other/BitField.h \
 	controller/ClientController.h \
@@ -366,13 +388,19 @@ $O/controller/ClientController.o: controller/ClientController.cc \
 	$(INET_PROJ)/src/inet/common/Compat.h \
 	$(INET_PROJ)/src/inet/common/INETDefs.h \
 	$(INET_PROJ)/src/inet/common/InitStages.h \
+	$(INET_PROJ)/src/inet/common/NotifierConsts.h \
 	$(INET_PROJ)/src/inet/common/lifecycle/ILifecycle.h \
 	$(INET_PROJ)/src/inet/common/lifecycle/LifecycleOperation.h \
 	$(INET_PROJ)/src/inet/features.h \
 	$(INET_PROJ)/src/inet/linklayer/common/MACAddress.h \
+	$(INET_PROJ)/src/inet/networklayer/common/InterfaceEntry.h \
+	$(INET_PROJ)/src/inet/networklayer/common/InterfaceToken.h \
 	$(INET_PROJ)/src/inet/networklayer/common/L3Address.h \
+	$(INET_PROJ)/src/inet/networklayer/common/L3AddressResolver.h \
 	$(INET_PROJ)/src/inet/networklayer/common/ModuleIdAddress.h \
 	$(INET_PROJ)/src/inet/networklayer/common/ModulePathAddress.h \
+	$(INET_PROJ)/src/inet/networklayer/contract/IRoute.h \
+	$(INET_PROJ)/src/inet/networklayer/contract/IRoutingTable.h \
 	$(INET_PROJ)/src/inet/networklayer/contract/ipv4/IPv4Address.h \
 	$(INET_PROJ)/src/inet/networklayer/contract/ipv6/IPv6Address.h \
 	$(INET_PROJ)/src/inet/transportlayer/contract/tcp/TCPCommand_m.h \

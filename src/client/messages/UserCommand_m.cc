@@ -431,7 +431,7 @@ void EnterSwarmCommand::copy(const EnterSwarmCommand& other)
 {
     this->torrentMetadata = other.torrentMetadata;
     this->seeder = other.seeder;
-//    this->trackerAddress = other.trackerAddress;
+    this->trackerAddress = other.trackerAddress;
     this->trackerPort = other.trackerPort;
 }
 
@@ -440,7 +440,7 @@ void EnterSwarmCommand::parsimPack(omnetpp::cCommBuffer *b) const
     ::UserCommand::parsimPack(b);
     doParsimPacking(b,this->torrentMetadata);
     doParsimPacking(b,this->seeder);
-//    doParsimPacking(b,this->trackerAddress);
+    doParsimPacking(b,this->trackerAddress);
     doParsimPacking(b,this->trackerPort);
 }
 
@@ -449,7 +449,7 @@ void EnterSwarmCommand::parsimUnpack(omnetpp::cCommBuffer *b)
     ::UserCommand::parsimUnpack(b);
     doParsimUnpacking(b,this->torrentMetadata);
     doParsimUnpacking(b,this->seeder);
-//    doParsimUnpacking(b,this->trackerAddress);
+    doParsimUnpacking(b,this->trackerAddress);
     doParsimUnpacking(b,this->trackerPort);
 }
 
@@ -473,15 +473,15 @@ void EnterSwarmCommand::setSeeder(bool seeder)
     this->seeder = seeder;
 }
 
-//IPvXAddress& EnterSwarmCommand::getTrackerAddress()
-//{
-////    return this->trackerAddress;
-//}
-//
-//void EnterSwarmCommand::setTrackerAddress(const IPvXAddress& trackerAddress)
-//{
-////    this->trackerAddress = trackerAddress;
-//}
+L3Address& EnterSwarmCommand::getTrackerAddress()
+{
+    return this->trackerAddress;
+}
+
+void EnterSwarmCommand::setTrackerAddress(const L3Address& trackerAddress)
+{
+    this->trackerAddress = trackerAddress;
+}
 
 int EnterSwarmCommand::getTrackerPort() const
 {
@@ -616,7 +616,7 @@ const char *EnterSwarmCommandDescriptor::getFieldTypeString(int field) const
     static const char *fieldTypeStrings[] = {
         "TorrentMetadata",
         "bool",
-        "IPvXAddress",
+        "L3Address",
         "int",
     };
     return (field>=0 && field<4) ? fieldTypeStrings[field] : nullptr;
@@ -674,7 +674,7 @@ std::string EnterSwarmCommandDescriptor::getFieldValueAsString(void *object, int
     switch (field) {
         case 0: {std::stringstream out; out << pp->getTorrentMetadata(); return out.str();}
         case 1: return bool2string(pp->getSeeder());
-//        case 2: {std::stringstream out; out << pp->getTrackerAddress(); return out.str();}
+        case 2: {std::stringstream out; out << pp->getTrackerAddress(); return out.str();}
         case 3: return long2string(pp->getTrackerPort());
         default: return "";
     }
@@ -706,7 +706,7 @@ const char *EnterSwarmCommandDescriptor::getFieldStructName(int field) const
     }
     switch (field) {
         case 0: return omnetpp::opp_typename(typeid(TorrentMetadata));
-//        case 2: return omnetpp::opp_typename(typeid(IPvXAddress));
+        case 2: return omnetpp::opp_typename(typeid(L3Address));
         default: return nullptr;
     };
 }
@@ -722,7 +722,7 @@ void *EnterSwarmCommandDescriptor::getFieldStructValuePointer(void *object, int 
     EnterSwarmCommand *pp = (EnterSwarmCommand *)object; (void)pp;
     switch (field) {
         case 0: return (void *)(&pp->getTorrentMetadata()); break;
-//        case 2: return (void *)(&pp->getTrackerAddress()); break;
+        case 2: return (void *)(&pp->getTrackerAddress()); break;
         default: return nullptr;
     }
 }

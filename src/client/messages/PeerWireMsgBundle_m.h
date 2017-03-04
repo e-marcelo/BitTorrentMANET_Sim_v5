@@ -96,7 +96,7 @@ typedef cPacketQueue* cPacketQueuePtr;
 // }}
 
 /**
- * Class generated from <tt>client/messages/PeerWireMsgBundle.msg:85</tt> by nedtool.
+ * Class generated from <tt>client/messages/PeerWireMsgBundle.msg:86</tt> by nedtool.
  * <pre>
  * //
  * // Store several PeerWire messages. Used for request and have messages.
