@@ -21,8 +21,11 @@
 using namespace omnetpp;
 
 
+
+
 #include <omnetpp.h>
 #include <TCPSrvHostApp.h>
+#include <L3AddressResolver.h>
 using inet::TCPSrvHostApp;
 #include <boost/tuple/tuple_comparison.hpp>
 using boost::tuple;
@@ -30,6 +33,7 @@ using boost::make_tuple;
 using boost::tie;
 #include "PeerStatus.h"
 using inet::L3Address;
+using inet::L3AddressResolver;
 //class PeerStatus;
 //class PeerInfo;
 //class PeerWireThread;

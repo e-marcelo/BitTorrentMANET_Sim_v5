@@ -1,15 +1,15 @@
-file 4303 1488666252                                            
+file 4210 1488673859                                            
 version 2
-run Test-0-20170304-16:22:55-15538
+run Test-0-20170304-18:30:24-10608
 attr configname Test
-attr datetime 20170304-16:22:55
+attr datetime 20170304-18:30:24
 attr experiment Test
 attr inifile BasicConfig.ini
 attr iterationvars ""
 attr iterationvars2 $repetition=0
 attr measurement ""
 attr network BasicTopology
-attr processid 15538
+attr processid 10608
 attr repetition 0
 attr replication #0
 attr resultdir results
@@ -21,8 +21,10 @@ param **.constraintAreaMaxZ 0m
 param **.constraintAreaMinX 0m
 param **.constraintAreaMinY 0m
 param **.constraintAreaMinZ 0m
+param **.displayCommunicationRange true
+param **.displayTransmissions true
 param **.radio.displayCommunicationRange true
-param **.radio.receiver.sensitivity -61dBm
+param **.radio.receiver.sensitivity -71dBm
 param **.radio.receiver.snirThreshold 4dB
 param **.radio.transmitter.power 2mW
 param **.swarmManager.remainingSeeders 0.3
@@ -33,10 +35,12 @@ param **.wlan*.mac.maxQueueSize 14
 param **.wlan*.mac.retryLimit 7
 param **.wlan*.mac.rtsThresholdBytes 3000B
 param **.wlan*.mgmt.frameCapacity 10
-param **.wlan*.radio.displayCommunicationRange true
-param **.wlan*.radio.receiver.sensitivity -61dBm
+param **.wlan*.radio.receiver.sensitivity -71dBm
 param **.wlan*.radio.receiver.snirThreshold 4dB
 param **.wlan*.radio.transmitter.power 2mW
+param *.clientController.numSeeders 1
+param *.clientController.startTime 1s
+param *.peer[*].bitTorrentApp.bitTorrentClient.dataTransferMode "\"object\""
 param *.peer[*].bitTorrentApp.bitTorrentClient.processingTimeHistogram "\"../simulations/hist_55bin.dat\""
 param *.peer[*].mobility.changeAngleBy "normal(0deg, 30deg)"
 param *.peer[*].mobility.changeInterval "truncnormal(2s, 0.5s)"
@@ -46,10 +50,6 @@ param *.peer[*].mobility.updateInterval 100ms
 param *.peer[*].mobilityType "\"MassMobility\""
 param *.peer[*].typename "\"Peer\""
 param *.peer[*].wlan0.mgmtType "\"Ieee80211MgmtAdhoc\""
-param *.visualizer.mediumVisualizer.displaySignals true
-param *.visualizer.mediumVisualizer.signalPropagationUpdateInterval 100ns
-param *.visualizer.physicalLinkVisualizer.packetNameFilter "\"UDPData*\""
-param *.visualizer.sceneVisualizer.descriptionFigure "\"title\""
 
 vector 10  BasicTopology.peer[0].wlan0.mac.ctn[0]  state:vector  ETV
 attr interpolationmode  none
@@ -99,15 +99,15 @@ vector 29  BasicTopology.peer[2].wlan0.radio  receptionState:vector  ETV
 attr interpolationmode  sample-hold
 attr source  receptionStateChanged
 attr title  "Radio reception state, vector"
-6	4091 16 0 0 0 0 2 0 2 2 4
-7	4107 8 0 0 0 0 1 1 1 1 1
-9	4115 8 0 0 0 0 1 0 0 0 0
-10	4123 36 0 0 0 0 4 0 0 0 0
-17	4159 18 0 0 0 0 2 0 2 2 4
-18	4177 9 0 0 0 0 1 1 1 1 1
-20	4186 9 0 0 0 0 1 0 0 0 0
-21	4195 36 0 0 0 0 4 0 0 0 0
-28	4231 18 0 0 0 0 2 0 2 2 4
-29	4249 9 0 0 0 0 1 1 1 1 1
-31	4258 9 0 0 0 0 1 0 0 0 0
-32	4267 36 0 0 0 0 4 0 0 0 0
+6	3998 16 0 0 0 0 2 0 2 2 4
+7	4014 8 0 0 0 0 1 1 1 1 1
+9	4022 8 0 0 0 0 1 0 0 0 0
+10	4030 36 0 0 0 0 4 0 0 0 0
+17	4066 18 0 0 0 0 2 0 2 2 4
+18	4084 9 0 0 0 0 1 1 1 1 1
+20	4093 9 0 0 0 0 1 0 0 0 0
+21	4102 36 0 0 0 0 4 0 0 0 0
+28	4138 18 0 0 0 0 2 0 2 2 4
+29	4156 9 0 0 0 0 1 1 1 1 1
+31	4165 9 0 0 0 0 1 0 0 0 0
+32	4174 36 0 0 0 0 4 0 0 0 0

@@ -42,6 +42,7 @@ void SwarmManager::treatUser(cMessage* msg) {
     switch(msg->getKind()){
         case 0://Semilla
             std::cerr << "Hola soy semilla :: "<< this->localPeerId <<"\n";
+            bitTorrentClient->createSwarm(0,0,0,0,0);
             break;
         case 1://Sanguijuela
             std::cerr << "Hola soy sanguijuela :: "<< this->localPeerId <<"\n";

@@ -30,6 +30,7 @@
 #include "ContentManager.h"
 #include "SwarmManager.h"
 
+
 // Dumb fix because of the CDT parser (https://bugs.eclipse.org/bugs/show_bug.cgi?id=332278)
 #ifdef __CDT_PARSER__
 #undef BOOST_FOREACH
@@ -73,7 +74,7 @@ void BitTorrentClient::initialize(int stage)
 //
 //    //IPAddressResolver resolver;
 //    //this->localIp = resolver.addressOf(getParentModule()->getParentModule(),IPAddressResolver::ADDR_PREFER_IPv4);
-//    this->localPort = par("localPort");
+     this->localPort = par("localPort");
 //
 //    this->subModulesDebugFlag = par("subModulesDebugFlag").boolValue();
 //    this->debugFlag = par("debugFlag").boolValue();
@@ -129,6 +130,23 @@ int BitTorrentClient::getLocalPeerId() const {
 //
 void BitTorrentClient::createSwarm(int infoHash, int numOfPieces,
         int numOfSubPieces, int subPieceSize, bool newSwarmSeeding) {
+    TCPSocket * socket = new TCPSocket();
+    cMessage *msg = new cMessage("Hello");
+    socket->setOutputGate(gate("tcpOut"));
+    socket->readDataTransferModePar(*this);
+
+    //Iniciando prueba de conexión TCP
+    L3Address addressA = L3AddressResolver().resolve("peer[1]", L3AddressResolver::ADDR_IPv4);
+    L3Address addressB = L3AddressResolver().resolve("peer[2]", L3AddressResolver::ADDR_IPv4);
+//
+    std::cerr << addressA.str() << "\n";
+    std::cerr << addressB.str() << "\n";
+
+    socket->connect(addressA,this->localPort);
+    socket->send(msg);
+    socket->connect(addressB,this->localPort);
+    socket->send(msg);
+
 }
 //
 void BitTorrentClient::deleteSwarm(int infoHash) {
@@ -249,7 +267,7 @@ PeerStatus & BitTorrentClient::getPeerStatus(int infoHash, int peerId) {
 }
 // Methods used by the Choker
 void BitTorrentClient::chokePeer(int infoHash, int peerId) {
-    Enter_Method("chokePeer(infoHash: %d, peerId: %d)", infoHash, peerId);
+//    Enter_Method("chokePeer(infoHash: %d, peerId: %d)", infoHash, peerId);
 
     PeerStatus & peer = this->getPeerStatus(infoHash, peerId);
     if (peer.isUnchoked()) {
@@ -259,7 +277,7 @@ void BitTorrentClient::chokePeer(int infoHash, int peerId) {
 }
 
 PeerVector BitTorrentClient::getFastestToDownload(int infoHash) const {
-    Enter_Method("getFastestToDownload(infoHash: %d)", infoHash);
+//    Enter_Method("getFastestToDownload(infoHash: %d)", infoHash);
     Swarm const& swarm = this->getSwarm(infoHash);
     PeerMap const& peerMap = swarm.peerMap;
     PeerVector orderedPeers;
@@ -280,7 +298,7 @@ PeerVector BitTorrentClient::getFastestToDownload(int infoHash) const {
     return orderedPeers;
 }
 PeerVector BitTorrentClient::getFastestToUpload(int infoHash) const {
-    Enter_Method("getFastestToUpload(infoHash: %d)", infoHash);
+//    Enter_Method("getFastestToUpload(infoHash: %d)", infoHash);
     Swarm const& swarm = this->getSwarm(infoHash);
     PeerMap const& peerMap = swarm.peerMap;
     int peerMapSize = peerMap.size();
