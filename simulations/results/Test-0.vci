@@ -1,15 +1,15 @@
-file 4210 1488673859                                            
+file 8658 1488938369                                            
 version 2
-run Test-0-20170304-18:30:24-10608
+run Test-0-20170307-19:58:03-11787
 attr configname Test
-attr datetime 20170304-18:30:24
+attr datetime 20170307-19:58:03
 attr experiment Test
 attr inifile BasicConfig.ini
 attr iterationvars ""
 attr iterationvars2 $repetition=0
 attr measurement ""
 attr network BasicTopology
-attr processid 10608
+attr processid 11787
 attr repetition 0
 attr replication #0
 attr resultdir results
@@ -23,91 +23,204 @@ param **.constraintAreaMinY 0m
 param **.constraintAreaMinZ 0m
 param **.displayCommunicationRange true
 param **.displayTransmissions true
-param **.radio.displayCommunicationRange true
-param **.radio.receiver.sensitivity -71dBm
-param **.radio.receiver.snirThreshold 4dB
-param **.radio.transmitter.power 2mW
-param **.swarmManager.remainingSeeders 0.3
-param **.wlan*.mac.address "\"auto\""
-param **.wlan*.mac.cwMinBroadcast 31
-param **.wlan*.mac.cwMinData 7
-param **.wlan*.mac.maxQueueSize 14
-param **.wlan*.mac.retryLimit 7
-param **.wlan*.mac.rtsThresholdBytes 3000B
-param **.wlan*.mgmt.frameCapacity 10
-param **.wlan*.radio.receiver.sensitivity -71dBm
-param **.wlan*.radio.receiver.snirThreshold 4dB
-param **.wlan*.radio.transmitter.power 2mW
+param **.wlan[*].bitrate 2Mbps
+param **.wlan[*].mac.address "\"auto\""
+param **.wlan[*].mac.cwMinBroadcast 31
+param **.wlan[*].mac.cwMinData 7
+param **.wlan[*].mac.maxQueueSize 14
+param **.wlan[*].mac.retryLimit 7
+param **.wlan[*].mac.rtsThresholdBytes 3000B
+param **.wlan[*].mgmt.frameCapacity 10
+param **.wlan[*].radio.receiver.sensitivity -71dBm
+param **.wlan[*].radio.receiver.snirThreshold 4dB
+param **.wlan[*].radio.transmitter.power 2mW
+param *.clientController.contents "xmldoc(\"../simulations/BTContents.xml\", \"contentList\")"
 param *.clientController.numSeeders 1
-param *.clientController.startTime 1s
+param *.clientController.startTime 5s
+param *.numPeers 8
+param *.peer[*].bitTorrentApp.bitTorrentClient.communicationRange 40
 param *.peer[*].bitTorrentApp.bitTorrentClient.dataTransferMode "\"object\""
+param *.peer[*].bitTorrentApp.bitTorrentClient.globalNumberOfPeers 8
 param *.peer[*].bitTorrentApp.bitTorrentClient.processingTimeHistogram "\"../simulations/hist_55bin.dat\""
-param *.peer[*].mobility.changeAngleBy "normal(0deg, 30deg)"
-param *.peer[*].mobility.changeInterval "truncnormal(2s, 0.5s)"
 param *.peer[*].mobility.initFromDisplayString false
-param *.peer[*].mobility.speed "truncnormal(20mps, 8mps)"
-param *.peer[*].mobility.updateInterval 100ms
-param *.peer[*].mobilityType "\"MassMobility\""
-param *.peer[*].typename "\"Peer\""
-param *.peer[*].wlan0.mgmtType "\"Ieee80211MgmtAdhoc\""
+param *.peer[*].mobilityType "\"StationaryMobility\""
+param *.peer[*].tcpApp[0].typename "\"Peer\""
+param *.peer[*].wlan[*].mgmtType "\"Ieee80211MgmtAdhoc\""
+param *.peer[0].mobility.initialX 500m
+param *.peer[0].mobility.initialY 500m
+param *.peer[1].mobility.initialX 535m
+param *.peer[1].mobility.initialY 490m
+param *.peer[2].mobility.initialX 505m
+param *.peer[2].mobility.initialY 520m
+param *.peer[3].mobility.initialX 495m
+param *.peer[3].mobility.initialY 485m
+param *.peer[4].mobility.initialX 560m
+param *.peer[4].mobility.initialY 400m
+param *.peer[5].mobility.initialX 540m
+param *.peer[5].mobility.initialY 495m
+param *.peer[6].mobility.initialX 500m
+param *.peer[6].mobility.initialY 500m
+param *.peer[7].mobility.initialX 554m
+param *.peer[7].mobility.initialY 400m
+param *.radioMedium.**.maxCommunicationRange 50m
 
-vector 10  BasicTopology.peer[0].wlan0.mac.ctn[0]  state:vector  ETV
+vector 10  BasicTopology.peer[0].wlan[0].mac.ctn[0]  state:vector  ETV
 attr interpolationmode  none
 attr source  stateChanged
 attr title  "contention state, vector"
-vector 21  BasicTopology.peer[1].wlan0.mac.ctn[0]  state:vector  ETV
+vector 21  BasicTopology.peer[1].wlan[0].mac.ctn[0]  state:vector  ETV
 attr interpolationmode  none
 attr source  stateChanged
 attr title  "contention state, vector"
-vector 32  BasicTopology.peer[2].wlan0.mac.ctn[0]  state:vector  ETV
+vector 32  BasicTopology.peer[2].wlan[0].mac.ctn[0]  state:vector  ETV
 attr interpolationmode  none
 attr source  stateChanged
 attr title  "contention state, vector"
-vector 6  BasicTopology.peer[0].wlan0.radio  radioMode:vector  ETV
+vector 43  BasicTopology.peer[3].wlan[0].mac.ctn[0]  state:vector  ETV
+attr interpolationmode  none
+attr source  stateChanged
+attr title  "contention state, vector"
+vector 54  BasicTopology.peer[4].wlan[0].mac.ctn[0]  state:vector  ETV
+attr interpolationmode  none
+attr source  stateChanged
+attr title  "contention state, vector"
+vector 65  BasicTopology.peer[5].wlan[0].mac.ctn[0]  state:vector  ETV
+attr interpolationmode  none
+attr source  stateChanged
+attr title  "contention state, vector"
+vector 76  BasicTopology.peer[6].wlan[0].mac.ctn[0]  state:vector  ETV
+attr interpolationmode  none
+attr source  stateChanged
+attr title  "contention state, vector"
+vector 87  BasicTopology.peer[7].wlan[0].mac.ctn[0]  state:vector  ETV
+attr interpolationmode  none
+attr source  stateChanged
+attr title  "contention state, vector"
+vector 6  BasicTopology.peer[0].wlan[0].radio  radioMode:vector  ETV
 attr interpolationmode  sample-hold
 attr source  radioModeChanged
 attr title  "Radio mode, vector"
-vector 9  BasicTopology.peer[0].wlan0.radio  radioChannel:vector  ETV
+vector 9  BasicTopology.peer[0].wlan[0].radio  radioChannel:vector  ETV
 attr interpolationmode  sample-hold
 attr source  radioChannelChanged
 attr title  "Radio channel, vector"
-vector 17  BasicTopology.peer[1].wlan0.radio  radioMode:vector  ETV
+vector 17  BasicTopology.peer[1].wlan[0].radio  radioMode:vector  ETV
 attr interpolationmode  sample-hold
 attr source  radioModeChanged
 attr title  "Radio mode, vector"
-vector 20  BasicTopology.peer[1].wlan0.radio  radioChannel:vector  ETV
+vector 20  BasicTopology.peer[1].wlan[0].radio  radioChannel:vector  ETV
 attr interpolationmode  sample-hold
 attr source  radioChannelChanged
 attr title  "Radio channel, vector"
-vector 28  BasicTopology.peer[2].wlan0.radio  radioMode:vector  ETV
+vector 28  BasicTopology.peer[2].wlan[0].radio  radioMode:vector  ETV
 attr interpolationmode  sample-hold
 attr source  radioModeChanged
 attr title  "Radio mode, vector"
-vector 31  BasicTopology.peer[2].wlan0.radio  radioChannel:vector  ETV
+vector 31  BasicTopology.peer[2].wlan[0].radio  radioChannel:vector  ETV
 attr interpolationmode  sample-hold
 attr source  radioChannelChanged
 attr title  "Radio channel, vector"
-vector 7  BasicTopology.peer[0].wlan0.radio  receptionState:vector  ETV
+vector 39  BasicTopology.peer[3].wlan[0].radio  radioMode:vector  ETV
+attr interpolationmode  sample-hold
+attr source  radioModeChanged
+attr title  "Radio mode, vector"
+vector 42  BasicTopology.peer[3].wlan[0].radio  radioChannel:vector  ETV
+attr interpolationmode  sample-hold
+attr source  radioChannelChanged
+attr title  "Radio channel, vector"
+vector 50  BasicTopology.peer[4].wlan[0].radio  radioMode:vector  ETV
+attr interpolationmode  sample-hold
+attr source  radioModeChanged
+attr title  "Radio mode, vector"
+vector 53  BasicTopology.peer[4].wlan[0].radio  radioChannel:vector  ETV
+attr interpolationmode  sample-hold
+attr source  radioChannelChanged
+attr title  "Radio channel, vector"
+vector 61  BasicTopology.peer[5].wlan[0].radio  radioMode:vector  ETV
+attr interpolationmode  sample-hold
+attr source  radioModeChanged
+attr title  "Radio mode, vector"
+vector 64  BasicTopology.peer[5].wlan[0].radio  radioChannel:vector  ETV
+attr interpolationmode  sample-hold
+attr source  radioChannelChanged
+attr title  "Radio channel, vector"
+vector 72  BasicTopology.peer[6].wlan[0].radio  radioMode:vector  ETV
+attr interpolationmode  sample-hold
+attr source  radioModeChanged
+attr title  "Radio mode, vector"
+vector 75  BasicTopology.peer[6].wlan[0].radio  radioChannel:vector  ETV
+attr interpolationmode  sample-hold
+attr source  radioChannelChanged
+attr title  "Radio channel, vector"
+vector 83  BasicTopology.peer[7].wlan[0].radio  radioMode:vector  ETV
+attr interpolationmode  sample-hold
+attr source  radioModeChanged
+attr title  "Radio mode, vector"
+vector 86  BasicTopology.peer[7].wlan[0].radio  radioChannel:vector  ETV
+attr interpolationmode  sample-hold
+attr source  radioChannelChanged
+attr title  "Radio channel, vector"
+vector 7  BasicTopology.peer[0].wlan[0].radio  receptionState:vector  ETV
 attr interpolationmode  sample-hold
 attr source  receptionStateChanged
 attr title  "Radio reception state, vector"
-vector 18  BasicTopology.peer[1].wlan0.radio  receptionState:vector  ETV
+vector 18  BasicTopology.peer[1].wlan[0].radio  receptionState:vector  ETV
 attr interpolationmode  sample-hold
 attr source  receptionStateChanged
 attr title  "Radio reception state, vector"
-vector 29  BasicTopology.peer[2].wlan0.radio  receptionState:vector  ETV
+vector 29  BasicTopology.peer[2].wlan[0].radio  receptionState:vector  ETV
 attr interpolationmode  sample-hold
 attr source  receptionStateChanged
 attr title  "Radio reception state, vector"
-6	3998 16 0 0 0 0 2 0 2 2 4
-7	4014 8 0 0 0 0 1 1 1 1 1
-9	4022 8 0 0 0 0 1 0 0 0 0
-10	4030 36 0 0 0 0 4 0 0 0 0
-17	4066 18 0 0 0 0 2 0 2 2 4
-18	4084 9 0 0 0 0 1 1 1 1 1
-20	4093 9 0 0 0 0 1 0 0 0 0
-21	4102 36 0 0 0 0 4 0 0 0 0
-28	4138 18 0 0 0 0 2 0 2 2 4
-29	4156 9 0 0 0 0 1 1 1 1 1
-31	4165 9 0 0 0 0 1 0 0 0 0
-32	4174 36 0 0 0 0 4 0 0 0 0
+vector 40  BasicTopology.peer[3].wlan[0].radio  receptionState:vector  ETV
+attr interpolationmode  sample-hold
+attr source  receptionStateChanged
+attr title  "Radio reception state, vector"
+vector 51  BasicTopology.peer[4].wlan[0].radio  receptionState:vector  ETV
+attr interpolationmode  sample-hold
+attr source  receptionStateChanged
+attr title  "Radio reception state, vector"
+vector 62  BasicTopology.peer[5].wlan[0].radio  receptionState:vector  ETV
+attr interpolationmode  sample-hold
+attr source  receptionStateChanged
+attr title  "Radio reception state, vector"
+vector 73  BasicTopology.peer[6].wlan[0].radio  receptionState:vector  ETV
+attr interpolationmode  sample-hold
+attr source  receptionStateChanged
+attr title  "Radio reception state, vector"
+vector 84  BasicTopology.peer[7].wlan[0].radio  receptionState:vector  ETV
+attr interpolationmode  sample-hold
+attr source  receptionStateChanged
+attr title  "Radio reception state, vector"
+6	8086 16 0 0 0 0 2 0 2 2 4
+7	8102 8 0 0 0 0 1 1 1 1 1
+9	8110 8 0 0 0 0 1 0 0 0 0
+10	8118 36 0 0 0 0 4 0 0 0 0
+17	8154 18 0 0 0 0 2 0 2 2 4
+18	8172 9 0 0 0 0 1 1 1 1 1
+20	8181 9 0 0 0 0 1 0 0 0 0
+21	8190 36 0 0 0 0 4 0 0 0 0
+28	8226 18 0 0 0 0 2 0 2 2 4
+29	8244 9 0 0 0 0 1 1 1 1 1
+31	8253 9 0 0 0 0 1 0 0 0 0
+32	8262 36 0 0 0 0 4 0 0 0 0
+39	8298 18 0 0 0 0 2 0 2 2 4
+40	8316 9 0 0 0 0 1 1 1 1 1
+42	8325 9 0 0 0 0 1 0 0 0 0
+43	8334 36 0 0 0 0 4 0 0 0 0
+50	8370 18 0 0 0 0 2 0 2 2 4
+51	8388 9 0 0 0 0 1 1 1 1 1
+53	8397 9 0 0 0 0 1 0 0 0 0
+54	8406 36 0 0 0 0 4 0 0 0 0
+61	8442 18 0 0 0 0 2 0 2 2 4
+62	8460 9 0 0 0 0 1 1 1 1 1
+64	8469 9 0 0 0 0 1 0 0 0 0
+65	8478 36 0 0 0 0 4 0 0 0 0
+72	8514 18 0 0 0 0 2 0 2 2 4
+73	8532 9 0 0 0 0 1 1 1 1 1
+75	8541 9 0 0 0 0 1 0 0 0 0
+76	8550 36 0 0 0 0 4 0 0 0 0
+83	8586 18 0 0 0 0 2 0 2 2 4
+84	8604 9 0 0 0 0 1 1 1 1 1
+86	8613 9 0 0 0 0 1 0 0 0 0
+87	8622 36 0 0 0 0 4 0 0 0 0

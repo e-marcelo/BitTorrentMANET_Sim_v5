@@ -21,16 +21,16 @@ using namespace omnetpp;
 #include <ostream>
 #include <string>
 #include "DataRateRollingAverage.h"
-#include "PeerWireThread.h"
+//#include "PeerWireThread.h"
 //[EAM]class PeerWireThread;
 
 class PeerStatus {
 
 public:
-    PeerStatus(int peerId, PeerWireThread* thread);
+//    PeerStatus(int peerId, PeerWireThread* thread);
     //! Return a string representation of this PeerStatus object.
     std::string str() const;
-    PeerWireThread* getThread() const;
+//    PeerWireThread* getThread() const;
     //!@name PeerStatus main attributes.
     //@{
     //! Return the Id of the PeerStatus.
@@ -79,7 +79,7 @@ private:
      */
     int peerId;
     //! Pointer to the thread created when the Peer connected with the client.
-    PeerWireThread* thread;
+//    PeerWireThread* thread;
 
     //! True if the Peer is snubbed.
     bool snubbed;

@@ -65,8 +65,9 @@ simple BitTorrentClient extends TCPSrvHostApp
         double snubbedInterval @unit(s) = default(30s);
         double timeoutInterval @unit(s) = default(120s);
         double uploadRateInterval @unit(s) = default(1s);
-        int globalNumberOfPeers = default(30);
+        int globalNumberOfPeers = default(0);
         int numberOfActivePeers = default(4);
         int numberOfPassivePeers = default(6);
+        int communicationRange = default(50);
 }
  

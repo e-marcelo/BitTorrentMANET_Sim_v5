@@ -407,7 +407,7 @@ Register_Class(EnterSwarmCommand);
 EnterSwarmCommand::EnterSwarmCommand() : ::UserCommand()
 {
     this->seeder = false;
-    this->trackerPort = 0;
+    this->idDisplay = 0;
 }
 
 EnterSwarmCommand::EnterSwarmCommand(const EnterSwarmCommand& other) : ::UserCommand(other)
@@ -431,8 +431,7 @@ void EnterSwarmCommand::copy(const EnterSwarmCommand& other)
 {
     this->torrentMetadata = other.torrentMetadata;
     this->seeder = other.seeder;
-    this->trackerAddress = other.trackerAddress;
-    this->trackerPort = other.trackerPort;
+    this->idDisplay = other.idDisplay;
 }
 
 void EnterSwarmCommand::parsimPack(omnetpp::cCommBuffer *b) const
@@ -440,8 +439,7 @@ void EnterSwarmCommand::parsimPack(omnetpp::cCommBuffer *b) const
     ::UserCommand::parsimPack(b);
     doParsimPacking(b,this->torrentMetadata);
     doParsimPacking(b,this->seeder);
-    doParsimPacking(b,this->trackerAddress);
-    doParsimPacking(b,this->trackerPort);
+    doParsimPacking(b,this->idDisplay);
 }
 
 void EnterSwarmCommand::parsimUnpack(omnetpp::cCommBuffer *b)
@@ -449,8 +447,7 @@ void EnterSwarmCommand::parsimUnpack(omnetpp::cCommBuffer *b)
     ::UserCommand::parsimUnpack(b);
     doParsimUnpacking(b,this->torrentMetadata);
     doParsimUnpacking(b,this->seeder);
-    doParsimUnpacking(b,this->trackerAddress);
-    doParsimUnpacking(b,this->trackerPort);
+    doParsimUnpacking(b,this->idDisplay);
 }
 
 TorrentMetadata& EnterSwarmCommand::getTorrentMetadata()
@@ -473,24 +470,14 @@ void EnterSwarmCommand::setSeeder(bool seeder)
     this->seeder = seeder;
 }
 
-L3Address& EnterSwarmCommand::getTrackerAddress()
+int EnterSwarmCommand::getIdDisplay() const
 {
-    return this->trackerAddress;
+    return this->idDisplay;
 }
 
-void EnterSwarmCommand::setTrackerAddress(const L3Address& trackerAddress)
+void EnterSwarmCommand::setIdDisplay(int idDisplay)
 {
-    this->trackerAddress = trackerAddress;
-}
-
-int EnterSwarmCommand::getTrackerPort() const
-{
-    return this->trackerPort;
-}
-
-void EnterSwarmCommand::setTrackerPort(int trackerPort)
-{
-    this->trackerPort = trackerPort;
+    this->idDisplay = idDisplay;
 }
 
 class EnterSwarmCommandDescriptor : public omnetpp::cClassDescriptor
@@ -557,7 +544,7 @@ const char *EnterSwarmCommandDescriptor::getProperty(const char *propertyname) c
 int EnterSwarmCommandDescriptor::getFieldCount() const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
-    return basedesc ? 4+basedesc->getFieldCount() : 4;
+    return basedesc ? 3+basedesc->getFieldCount() : 3;
 }
 
 unsigned int EnterSwarmCommandDescriptor::getFieldTypeFlags(int field) const
@@ -571,10 +558,9 @@ unsigned int EnterSwarmCommandDescriptor::getFieldTypeFlags(int field) const
     static unsigned int fieldTypeFlags[] = {
         FD_ISCOMPOUND,
         FD_ISEDITABLE,
-        FD_ISCOMPOUND,
         FD_ISEDITABLE,
     };
-    return (field>=0 && field<4) ? fieldTypeFlags[field] : 0;
+    return (field>=0 && field<3) ? fieldTypeFlags[field] : 0;
 }
 
 const char *EnterSwarmCommandDescriptor::getFieldName(int field) const
@@ -588,10 +574,9 @@ const char *EnterSwarmCommandDescriptor::getFieldName(int field) const
     static const char *fieldNames[] = {
         "torrentMetadata",
         "seeder",
-        "trackerAddress",
-        "trackerPort",
+        "idDisplay",
     };
-    return (field>=0 && field<4) ? fieldNames[field] : nullptr;
+    return (field>=0 && field<3) ? fieldNames[field] : nullptr;
 }
 
 int EnterSwarmCommandDescriptor::findField(const char *fieldName) const
@@ -600,8 +585,7 @@ int EnterSwarmCommandDescriptor::findField(const char *fieldName) const
     int base = basedesc ? basedesc->getFieldCount() : 0;
     if (fieldName[0]=='t' && strcmp(fieldName, "torrentMetadata")==0) return base+0;
     if (fieldName[0]=='s' && strcmp(fieldName, "seeder")==0) return base+1;
-    if (fieldName[0]=='t' && strcmp(fieldName, "trackerAddress")==0) return base+2;
-    if (fieldName[0]=='t' && strcmp(fieldName, "trackerPort")==0) return base+3;
+    if (fieldName[0]=='i' && strcmp(fieldName, "idDisplay")==0) return base+2;
     return basedesc ? basedesc->findField(fieldName) : -1;
 }
 
@@ -616,10 +600,9 @@ const char *EnterSwarmCommandDescriptor::getFieldTypeString(int field) const
     static const char *fieldTypeStrings[] = {
         "TorrentMetadata",
         "bool",
-        "L3Address",
         "int",
     };
-    return (field>=0 && field<4) ? fieldTypeStrings[field] : nullptr;
+    return (field>=0 && field<3) ? fieldTypeStrings[field] : nullptr;
 }
 
 const char **EnterSwarmCommandDescriptor::getFieldPropertyNames(int field) const
@@ -674,8 +657,7 @@ std::string EnterSwarmCommandDescriptor::getFieldValueAsString(void *object, int
     switch (field) {
         case 0: {std::stringstream out; out << pp->getTorrentMetadata(); return out.str();}
         case 1: return bool2string(pp->getSeeder());
-        case 2: {std::stringstream out; out << pp->getTrackerAddress(); return out.str();}
-        case 3: return long2string(pp->getTrackerPort());
+        case 2: return long2string(pp->getIdDisplay());
         default: return "";
     }
 }
@@ -691,7 +673,7 @@ bool EnterSwarmCommandDescriptor::setFieldValueAsString(void *object, int field,
     EnterSwarmCommand *pp = (EnterSwarmCommand *)object; (void)pp;
     switch (field) {
         case 1: pp->setSeeder(string2bool(value)); return true;
-        case 3: pp->setTrackerPort(string2long(value)); return true;
+        case 2: pp->setIdDisplay(string2long(value)); return true;
         default: return false;
     }
 }
@@ -706,7 +688,6 @@ const char *EnterSwarmCommandDescriptor::getFieldStructName(int field) const
     }
     switch (field) {
         case 0: return omnetpp::opp_typename(typeid(TorrentMetadata));
-        case 2: return omnetpp::opp_typename(typeid(L3Address));
         default: return nullptr;
     };
 }
@@ -722,7 +703,6 @@ void *EnterSwarmCommandDescriptor::getFieldStructValuePointer(void *object, int 
     EnterSwarmCommand *pp = (EnterSwarmCommand *)object; (void)pp;
     switch (field) {
         case 0: return (void *)(&pp->getTorrentMetadata()); break;
-        case 2: return (void *)(&pp->getTrackerAddress()); break;
         default: return nullptr;
     }
 }

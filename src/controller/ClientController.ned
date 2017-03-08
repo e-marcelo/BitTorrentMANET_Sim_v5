@@ -28,6 +28,7 @@ simple ClientController
 //        );
         @display("i=block/user");
         bool debugFlag = default(false);
+        xml contents; // xml with all the infohashes
 //        xml profile = xmldoc("/home/eandres/Workspace_Omnet++5/BitTorrent/simulations/BTProfiles.xml","profileList/profile[@name='test_simple']");
         int numSeeders; // The number of initial seeders in each swarm
         double startTime @unit(s) = default(3s); // the entry time of the first peer

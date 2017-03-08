@@ -17,10 +17,10 @@
 
 
 // PeerStatus method implementations
-PeerStatus::PeerStatus(int peerId, PeerWireThread* thread) :
-        peerId(peerId), thread(thread), snubbed(false), interested(false),
-            unchoked(false), oldUnchoked(false), timeOfLastUnchoke(0) {
-}
+//PeerStatus::PeerStatus(int peerId, PeerWireThread* thread) :
+//        peerId(peerId), thread(thread), snubbed(false), interested(false),
+//            unchoked(false), oldUnchoked(false), timeOfLastUnchoke(0) {
+//}
 
 std::string PeerStatus::str() const {
     std::ostringstream out;
@@ -38,9 +38,9 @@ std::string PeerStatus::str() const {
 
     return out.str();
 }
-PeerWireThread* PeerStatus::getThread() const {
-    return this->thread;
-}
+//PeerWireThread* PeerStatus::getThread() const {
+//    return this->thread;
+//}
 
 int PeerStatus::getPeerId() const {
     return this->peerId;

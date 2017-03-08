@@ -27,7 +27,8 @@ simple SwarmManager like ITCPApp
         @signal[SwarmManager_LeaveSwarm];
         @signal[SwarmManager_EmittedPeerId];
     	@display("i=misc/globe,red");
-    
+    	
+    	
         // own parameters
         bool debugFlag = default(false);
         // The number of Peers the Client requests to the Tracker
@@ -35,9 +36,10 @@ simple SwarmManager like ITCPApp
         double normalRefreshInterval @unit(s) = default(180s);
         double minimumRefreshInterval @unit(s) = default(20s);
         // probability the Peer will stay in the swarm after completion
-        double remainingSeeders;
+//        double remainingSeeders;
     gates:
         input userCommand @directIn;
+        input peerBitField @directIn;
         input tcpIn @labels(TCPCommand/up);
         output tcpOut @labels(TCPCommand/down);
 }

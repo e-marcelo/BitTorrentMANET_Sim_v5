@@ -27,28 +27,45 @@ void SwarmManager::initialize()
         //Identificador del nodo
         this->localPeerId = this->getParentModule()->getId();
     }
-
 }
 
 void SwarmManager::handleMessage(cMessage *msg)
 {
     if(msg->arrivedOn("userCommand")){
         treatUser(msg);
+//        std::cerr << "Torrente :: \tInfoHash = "<< this->contents.at("small").infoHash << " | Piezas = " <<this->contents.at("small").numOfPieces <<"\n";
+    }
+    if(msg->arrivedOn("peerBitField")){
+        //Modo promiscuo!
+        std::cerr << this->localPeerId << " | Recibiendo... \n";
     }
 }
 
 void SwarmManager::treatUser(cMessage* msg) {
 
-    switch(msg->getKind()){
-        case 0://Semilla
-            std::cerr << "Hola soy semilla :: "<< this->localPeerId <<"\n";
-            bitTorrentClient->createSwarm(0,0,0,0,0);
-            break;
-        case 1://Sanguijuela
-            std::cerr << "Hola soy sanguijuela :: "<< this->localPeerId <<"\n";
-            break;
-        default:
-            std::cerr << "Comando no encontrado!\n";
+    cObject *controlInfo = msg->getControlInfo();
+    if(msg->getKind() == USER_COMMAND_ENTER_SWARM){
+        EnterSwarmCommand *enterSwarmCommand = check_and_cast<EnterSwarmCommand *>(controlInfo);
+//        std::cerr << "Recibiendo :: " << enterSwarmCommand->getTorrentMetadata().numOfPieces << " | Seed = " << enterSwarmCommand->getSeeder() << "\n";
+        this->enterSwarm(enterSwarmCommand->getTorrentMetadata(),enterSwarmCommand->getSeeder(), enterSwarmCommand->getIdDisplay());
     }
+    delete msg;
+//    switch(msg->getKind()){
+//        case 0://Semilla
+////            std::cerr << "Hola soy semilla :: "<< this->localPeerId <<"\n";
+//            bitTorrentClient->createSwarm(0,0,0,0,0);
+//            break;
+//        case 1://Sanguijuela
+////            std::cerr << "Hola soy sanguijuela :: "<< this->localPeerId <<"\n";
+//            bitTorrentClient->createSwarm(1,0,0,0,0);
+//            break;
+//        default:
+//            std::cerr << "Comando no encontrado!\n";
+//    }
 
+}
+
+void SwarmManager::enterSwarm(const TorrentMetadata& torrentInfo, bool seed,  int idDisplay) {
+    //Iniciamos la creación del enjambre
+    bitTorrentClient->createSwarm(torrentInfo.infoHash,torrentInfo.numOfPieces,torrentInfo.numOfSubPieces,torrentInfo.subPieceSize,seed, idDisplay);
 }

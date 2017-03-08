@@ -39,17 +39,23 @@ using omnetpp::cTopology;
 #include <L3AddressResolver.h>
 using inet::L3Address;
 using inet::L3AddressResolver;
-
+#include "PeerInfo.h"
 class SwarmManager;
 
 
-/*[EAM]Archivo del torrente
+
+//Archivo con extensión *.torrent
 struct TorrentMetadata {
     int numOfPieces;
     int numOfSubPieces;
     int subPieceSize;
     int infoHash;
-};*/
+};
+
+
+typedef std::set<PeerInfo> SwarmPeerList;
+
+
 /**
  * This module is responsible for controlling the Client's behavior: what content
  * to download, when to start downloading, how long should the seeding time be.
@@ -74,7 +80,9 @@ private:
     /*! Return the torrent metadata for the passed content. Must be called after
      * init stage 0.
      */ //TorrentMetadata getTorrentMetadata(const char* content);
-
+    TorrentMetadata const& getTorrentMetaData(std::string contentName);
+    std::map<std::string, TorrentMetadata> contents; //The key is the content name from XML file
+    std::map<int, SwarmPeerList> swarms; // The key is the infoHash
     //! Print a debug message to clog.
     void printDebugMsg(std::string s);
     void updateStatusString();

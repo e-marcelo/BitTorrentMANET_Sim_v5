@@ -24,36 +24,40 @@ Define_Module(ClientController);
 // helper functions in anonymous workspace
 namespace {
 
-/*! Create ControlInfo object common to all announce messages.
+//! Create ControlInfo object common to all announce messages.
 EnterSwarmCommand createDefaultControlInfo(
-    TorrentMetadata const& torrentMetadata,
-    L3Address const& trackerAddress, int trackerPort) {
-        // these parameters are default for all announce messages sent
+    TorrentMetadata const& torrentMetadata) {
+    // these parameters are default for all announce messages sent
     EnterSwarmCommand enterSwarmCommand;
     enterSwarmCommand.setTorrentMetadata(torrentMetadata);
-    enterSwarmCommand.setTrackerAddress(trackerAddress);
-    enterSwarmCommand.setTrackerPort(trackerPort);
-
     return enterSwarmCommand;
-}*/
+}
 
     //! Create the announce message that will be sent to the passed SwarmManager.
-    cMessage * createAnnounceMsg(bool seeder, SwarmManager * swarmManager) {
+    cMessage * createAnnounceMsg(EnterSwarmCommand const& defaultControlInfo, bool seeder, SwarmManager * swarmManager, int idDisplay) {
         // create the message and set the control info
         cMessage *msg = new cMessage("Init");
         msg->setContextPointer(swarmManager);
         //USER_COMMAND_ENTER_SWARM -> 0
-        if(seeder)
-            msg->setKind(0); //Identificador de Semilla
-        else
-            msg->setKind(1); //Identificador de Par
+        msg->setKind(USER_COMMAND_ENTER_SWARM); //Identificador de Semilla
+
+        //Each new message needs a new control info
+        //Update the seeder status in tje control info
+        EnterSwarmCommand *enterSwarmCommand = defaultControlInfo.dup();
+        enterSwarmCommand->setSeeder(seeder);
+        enterSwarmCommand->setIdDisplay(idDisplay);
+        msg->setControlInfo(enterSwarmCommand);
+//        if(seeder)
+//            msg->setKind(0); //Identificador de Semilla
+//        else
+//            msg->setKind(1); //Identificador de Par
         return msg;
     }
 
 
 
     //! Schedule the announce messages to all BitTorrent applications.
-    void scheduleStartMessages(ClientController * self, simtime_t const& startTime,/*,simtime_t const& interarrivalTime,*/ long const numSeeders) {
+    void scheduleStartMessages(ClientController * self, simtime_t const& startTime,/*,simtime_t const& interarrivalTime,*/ long const numSeeders,EnterSwarmCommand const& defaultControlInfo) {
         cTopology topo;
         topo.extractByProperty("peer");
         simtime_t enterTime = startTime;
@@ -61,7 +65,7 @@ EnterSwarmCommand createDefaultControlInfo(
             cModule *mod = topo.getNode(i)->getModule()->getSubmodule("swarmManager"); //Referencia al módulo swarm de cada par
             SwarmManager *swarmManager = (SwarmManager *)(mod);
             bool seeder = i < numSeeders;
-            cMessage *msg = createAnnounceMsg(seeder,swarmManager);
+            cMessage *msg = createAnnounceMsg(defaultControlInfo,seeder,swarmManager,i);
             // The first peers set to seeders and start imediatelly
             if (seeder) {
                 self->scheduleAt(enterTime, msg);
@@ -86,23 +90,42 @@ void ClientController::initialize(int stage)
             if (numSeeders < 1) {
                 throw cException("The number of seeders must be larger than 1");
             }
-            /*cXMLElementList contentList = profile->getChildrenByTagName("content");
-            if (contentList.empty()) {
-                throw cException("List of contents is empty. Check the xml file");
-            }*/
 
-            std::cerr << "Configuración del módulo ClientController :: Completo\n";
-            EV<<"Configuración del módulo ClientController :: Completo\n";
+            // Read all contents from the xml file.
+            cXMLElementList contentsList =
+                    par("contents").xmlValue()->getChildrenByTagName("content");
 
-            /*cXMLElementList::iterator it = contentList.begin();
-            for (int num = 0; it != contentList.end(); ++it, ++num) {
-                using boost::lexical_cast;
+            if (contentsList.empty()) {
+                throw std::invalid_argument(
+                        "List of contents is empty. Check the xml file");
+            }
+            cXMLElementList::iterator it = contentsList.begin();
+            int key = 0;
+            for (; it != contentsList.end(); ++it) {
+                TorrentMetadata torrentMetadata;
+                cXMLElement * child;
 
-                char const* contentName = (*it)->getFirstChildWithTag("name")->getNodeValue();
-                simtime_t interarrival = lexical_cast<double>((*it)->getFirstChildWithTag("interarrival")->getNodeValue());
-                scheduleStartMessages(this, startTime, interarrival,numSeeders);
-            }*/
-            scheduleStartMessages(this, startTime,numSeeders);
+                // create the torrent metadata
+                child = (*it)->getFirstChildWithTag("numOfPieces");
+                torrentMetadata.numOfPieces = atoi(child->getNodeValue());
+                child = (*it)->getFirstChildWithTag("numOfSubPieces");
+                torrentMetadata.numOfSubPieces = atoi(child->getNodeValue());
+                child = (*it)->getFirstChildWithTag("subPieceSize");
+                torrentMetadata.subPieceSize = atoi(child->getNodeValue());
+                torrentMetadata.infoHash = key;
+                this->swarms[torrentMetadata.infoHash];
+                // save a list of torrents for each video content
+                std::string contentName((*it)->getAttribute("name"));
+                this->contents[contentName] = torrentMetadata;
+                key ++; //Identificador del contenido en un orden creciente: 0,1,2,..n
+            }
+
+            //Prueba con el contenido seleccionado
+            TorrentMetadata const& torrentMetadata = this->contents.at("small");
+
+            EnterSwarmCommand const& defaultControlInfo = createDefaultControlInfo(torrentMetadata);
+
+            scheduleStartMessages(this, startTime,numSeeders,defaultControlInfo);
             this->updateStatusString();
         }
 }
@@ -138,16 +161,16 @@ int ClientController::numInitStages() const {
 void ClientController::handleMessage(cMessage *msg)
 {
     if (!msg->isSelfMessage()) {
+            std::cerr << "Error ClientController :: This module doesn't process messages\n";
             throw cException("This module doesn't process messages");
-            std::cerr << "Erro ClientController :: This module doesn't process messages\n";
     }
     cModule *mod = (cModule *) msg->getContextPointer();
     if (mod == NULL) {
            std::cerr <<"Módulo SwarmManager, no encontrado\n";
            EV << "Módulo SwarmManager, no encontrado\n";
     }else{
-        EV << "Enviando comando :: userCommand \n";
-        std::cerr <<"Enviando comando :: userCommand \n";
+//        std::cerr <<"Enviando comando :: userCommand \n";
+//        EV << "Enviando comando :: userCommand \n";
         sendDirect(msg, mod, "userCommand");
     }
 }

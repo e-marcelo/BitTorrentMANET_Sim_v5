@@ -69,68 +69,48 @@
 // PRESENCE OF ABSENCE OF ERRORS, WHETHER OR NOT DISCOVERABLE. SOME
 // JURISDICTIONS DO NOT ALLOW THE EXCLUSION OF IMPLIED WARRANTIES, SO THIS
 // EXCLUSION MAY NOT APPLY TO YOU.
+/*
+ * PeerInfo.h
+ *
+ *  Created on: Mar 31, 2010
+ *      Author: pevangelista
+ */
 
-#ifndef __TRACKERAPP_H__
-#define __TRACKERAPP_H__
+#ifndef PEERINFO_H_
+#define PEERINFO_H_
 
-#include <omnetpp.h>
-#include <TCPSrvHostApp.h>
-using inet::TCPSrvHostApp;
-using omnetpp::cSimulation;
-#include <vector>
-#include <set>
-#include <boost/shared_ptr.hpp>
-#define simulation  (*cSimulation::getActiveSimulation())
+#include <string>
+#include <L3Address.h>
+using inet::L3Address;
 
-//[EAM]#include "TCPSrvHostApp.h"
-#include "messages/AnnounceRequestMsg_m.h"
-#include "messages/AnnounceResponseMsg_m.h"
-
-struct TorrentMetadata {
-    int numOfPieces;
-    int numOfSubPieces;
-    int subPieceSize;
-    int infoHash;
-};
-
-typedef std::set<PeerInfo> SwarmPeerList;
-
-// TODO if the peer don't respond during an interval, remove it from list
-class TrackerApp: public TCPSrvHostApp {
+class PeerInfo {
 public:
-    friend class PeerConnectionThread;
+    PeerInfo();
+//    PeerInfo(int peerId,L3Address const& ip, int port);
+    virtual ~PeerInfo();
 
-    TrackerApp();
-    virtual ~TrackerApp();
-    TorrentMetadata const& getTorrentMetaData(std::string contentName);
+    //! Return the bencoded representation of the Peer information.
+    std::string getBencodedInfo() const;
+    int getPeerId() const;
+//    L3Address const& getIp() const;
+    int getPort() const;
+//    void setStatus(AnnounceType status);
+//    AnnounceType getStatus();
+
+    bool operator==(PeerInfo const& peerInfo) const;
+    bool operator!=(PeerInfo const& peerInfo) const;
+    /*!
+     * Return true if this PeerInfo comes before peerInfo.
+     * Compare done in this order: peerId, ip and port.
+     */
+    bool operator<(PeerInfo const& peerInfo) const;
 private:
-    bool debugFlag;
-    int totalBytesUploaded;
-    int totalBytesDownloaded;
-
-    std::map<std::string, TorrentMetadata> contents; //The key is the content name from XML file
-    std::map<int, SwarmPeerList> swarms; // The key is the infoHash
-
-    //Signal
-    simsignal_t seederSignal;
-private:
-    //! Print a debug message to the passed ostream, which defaults to clog.
-    void printDebugMsg(std::string s);
-    std::vector<PeerInfo const*> getListOfPeers(const PeerInfo & peerInfo,
-            int infoHash, unsigned int numberOfPeers) const;
-    std::vector<PeerInfo const*> getRandomPeers(PeerInfo const& peerInfo,
-            int infoHash, unsigned int numberOfPeers) const;
-    void updatePeerStatus(PeerInfo const& peerInfo, int infoHash,
-            AnnounceType status);
-    void startupPeerList();
-    //!@name Signal registration and subscription methods
-    //@{
-    //! Register all signals this module is going to emit.
-    void registerEmittedSignals();
-    //@}
-protected:
-    virtual void initialize();
-    virtual void handleMessage(cMessage *msg);
+    int peerId; //! The peer Id
+//    L3Address ip; //! The peer IP Address
+    unsigned int port; //! The peer TCP port number
+//    AnnounceType status;
 };
 
-#endif
+std::ostream& operator<<(std::ostream& out, PeerInfo const& peerInfo);
+
+#endif /* PEERINFO_H_ */

@@ -28,47 +28,52 @@ using namespace omnetpp;
 #include <L3AddressResolver.h>
 using inet::TCPSrvHostApp;
 #include <boost/tuple/tuple_comparison.hpp>
+//Separador de cadenas (para ubicar a cada nodo de acuerdo a su identificador en el escenario de simulación)
+#include <boost/tokenizer.hpp>
 using boost::tuple;
 using boost::make_tuple;
 using boost::tie;
-#include "PeerStatus.h"
+//#include "PeerStatus.h"
 using inet::L3Address;
 using inet::L3AddressResolver;
 //class PeerStatus;
 //class PeerInfo;
 //class PeerWireThread;
-//class SwarmManager;
+class SwarmManager;
 
-class Choker;
-class ContentManager;
+//class Choker;
+//class ContentManager;
+
+
+
 
 //! Vector of PeerStatus pointers.
-typedef std::vector<PeerStatus const*> PeerVector;
+//typedef std::vector<PeerStatus const*> PeerVector;
 //! Tuple with connect information about a Peer. <PeerId, IpAddress, Port>
 typedef tuple<int, L3Address, int> PeerConnInfo;
 //! List of unconnected Peers
 typedef std::list<PeerConnInfo> UnconnectedList;
 //! Map of peer entries with peerId as key
-typedef std::map<int, PeerStatus> PeerMap;
+//typedef std::map<int, PeerStatus> PeerMap;
 //! Swarm (numActive, numPassive, PeerMap, UnconnectedList, seeding)
 struct Swarm {
     int numActive;
     int numPassive;
-    PeerMap peerMap;
-    UnconnectedList unconnectedList;
+//    PeerMap peerMap;
+//    UnconnectedList unconnectedList;
     bool seeding;
     bool closing;
-    Choker * choker;
-    ContentManager* contentManager;
+//    Choker * choker;
+//    ContentManager* contentManager;
 };
 //! map of swarms with infoHash as key
 typedef std::map<int, Swarm> SwarmMap;
 
 // Iterators
-typedef PeerVector::iterator PeerVectorIt;
+//typedef PeerVector::iterator PeerVectorIt;
 typedef UnconnectedList::iterator UnconnectedListIt;
-typedef PeerMap::iterator PeerMapIt;
-typedef PeerMap::const_iterator PeerMapConstIt;
+//typedef PeerMap::iterator PeerMapIt;
+//typedef PeerMap::const_iterator PeerMapConstIt;
 typedef SwarmMap::iterator SwarmMapIt;
 typedef SwarmMap::const_iterator SwarmMapConstIt;
 
@@ -82,38 +87,52 @@ class BitTorrentClient : public TCPSrvHostApp
     BitTorrentClient();
     //! Delete the sockets and threads
     virtual ~BitTorrentClient();
-    void unchokePeer(int infoHash, int peerId);
+//    void unchokePeer(int infoHash, int peerId);
     void closeConnection(int infoHash, int peerId) const;
     void finishedDownload(int infoHash);
-    void peerInteresting(int infoHash, int peerId) const;
-    void peerNotInteresting(int infoHash, int peerId) const;
+//    void peerInteresting(int infoHash, int peerId) const;
+//    void peerNotInteresting(int infoHash, int peerId) const;
     void sendHaveMessages(int infoHash, int pieceIndex) const;
     void sendPieceMessage(int infoHash, int peerId) const;
-    double updateUploadRate(int infoHash, int peerId,unsigned long totalUploaded);
+//    double updateUploadRate(int infoHash, int peerId,unsigned long totalUploaded);
     int getLocalPeerId() const;
-    void createSwarm(int infoHash, int numOfPieces, int numOfSubPieces,int subPieceSize, bool newSwarmSeeding);
+    void createSwarm(int infoHash, int numOfPieces, int numOfSubPieces,int subPieceSize, bool newSwarmSeeding, int idDisplay);
     void deleteSwarm(int infoHash);
-    PeerVector getFastestToUpload(int infoHash) const;
-    PeerVector getFastestToDownload(int infoHash) const;
-    void chokePeer(int infoHash, int peerId);
+//    PeerVector getFastestToUpload(int infoHash) const;
+//    PeerVector getFastestToDownload(int infoHash) const;
+//    void chokePeer(int infoHash, int peerId);
     cDoubleHistogram doubleProcessingTimeHist;
-    std::list<PeerWireThread*>::iterator threadInProcessingIt;
-    void processNextThread();
+//    std::list<PeerWireThread*>::iterator threadInProcessingIt;
+//    void processNextThread();
 
   private:
-    std::list<PeerWireThread*> allThreads;
-    PeerStatus & getPeerStatus(int infoHash, int peerId);
-    bool canConnect(int infoHash, int peerId, bool active) const;
-    void removePeerFromSwarm(int infoHash, int peerId, int connId, bool active);
-    void setInterested(bool interested, int infoHash, int peerId);
-    void setOldUnchoked(bool oldUnchoke, int infoHash, int peerId);
-    void setSnubbed(bool snubbed, int infoHash, int peerId);
-    cMessage endOfProcessingTimer;
+    std::string strCurrentNode;
+    std::string strArgNode;
+    std::ostringstream optNumtoStr;
+    int count;
+    int peerX;
+    int peerY;
+
+    void currentPosition(const char * peer, int *x, int *y);
+    void findLocalNeighborhood();
+//    cPacket* createHelloMessage();
+    void sendBroadcast(int idNode/*cPacket *packet, const L3Address& destAddr, unsigned int timeToLive, double delay*/);
+
+    // self messages
+//    cMessage *helloMsgTimer = nullptr;    // timer to send hello messages (only if the feature is enabled)
+//    std::list<PeerWireThread*> allThreads;
+//    PeerStatus & getPeerStatus(int infoHash, int peerId);
+//    bool canConnect(int infoHash, int peerId, bool active) const;
+//    void removePeerFromSwarm(int infoHash, int peerId, int connId, bool active);
+//    void setInterested(bool interested, int infoHash, int peerId);
+//    void setOldUnchoked(bool oldUnchoke, int infoHash, int peerId);
+//    void setSnubbed(bool snubbed, int infoHash, int peerId);
+//    cMessage endOfProcessingTimer;
         //! Processing time histogram, used to generate values for the simulation
         //@}
 
         //! Contains the list of swarms mapped by their infoHash
-    SwarmMap swarmMap;
+//    SwarmMap swarmMap;
         /*!
          * Set with all active connections established or attempted by this Peer.
          * Peers are only removed from this list when the TCP connection closes.
@@ -125,83 +144,89 @@ class BitTorrentClient : public TCPSrvHostApp
 //         *
 //         * Structure: [(infoHash, peerId),]
 //         */
-    std::set<std::pair<int, int> > activeConnectedPeers;
+    SwarmManager *swarmManager;
+//    std::set<std::pair<int, int> > activeConnectedPeers;
 //        //!@name Timer intervals
 //        //@{
 //        //! The time, in seconds, to occur an snubbed timeout.
-    simtime_t snubbedInterval;
+//    simtime_t snubbedInterval;
         //! The time, in seconds, to occur a message timeout.
-    simtime_t timeoutInterval;
+//    simtime_t timeoutInterval;
 //        //! The time, in seconds, to occur a keep-alive timeout.
 //    simtime_t keepAliveInterval;
 //        //! The time, in seconds, to occur a download rate timeout.
-    simtime_t downloadRateInterval;
+//    simtime_t downloadRateInterval;
 //        //! The time, in seconds, to occur a upload rate timeout.
-    simtime_t uploadRateInterval;
+//    simtime_t uploadRateInterval;
 //        //@}
 //        //! The IP address of this Client.
-//        //IPvXAddress localIp;
+    L3Address localIp;
 //        //! The port of this Client.
     int localPort;
+    int communicationRange;
 //        //! The peerId of this Client.
 //
+
+//    TCPSocket * socket;
 //
     int localPeerId;
+    int localIdDisplay = -1;
 //        //! Set to true to print debug messages.
-    bool debugFlag;
+//    bool debugFlag;
 //        //! Set to true to print debug messages for the swarm modules.
-    bool subModulesDebugFlag;
+//    bool subModulesDebugFlag;
 //        //! TODO document this
     int globalNumberOfPeers;
 //        //! TODO document this
-    int numActiveConn;
+//    int numActiveConn;
 //        //! TODO document this
-    int numPassiveConn;
+//    int numPassiveConn;
 //        //!@name Signals and helper variables
 //        //@{
-    unsigned int prevNumUnconnected;
-    unsigned int prevNumConnected;
-    simsignal_t numUnconnected_Signal;
-    simsignal_t numConnected_Signal;
-//
-    simsignal_t processingTime_Signal;
-//
-    simsignal_t peerWireBytesSent_Signal;
-    simsignal_t peerWireBytesReceived_Signal;
-    simsignal_t contentBytesSent_Signal;
-    simsignal_t contentBytesReceived_Signal;
-//
-    simsignal_t bitFieldSent_Signal;
-    simsignal_t bitFieldReceived_Signal;
-    simsignal_t cancelSent_Signal;
-    simsignal_t cancelReceived_Signal;
-    simsignal_t chokeSent_Signal;
-    simsignal_t chokeReceived_Signal;
-    simsignal_t handshakeSent_Signal;
-    simsignal_t handshakeReceived_Signal;
-    simsignal_t haveSent_Signal;
-    simsignal_t haveReceived_Signal;
-    simsignal_t interestedSent_Signal;
-    simsignal_t interestedReceived_Signal;
-    simsignal_t keepAliveSent_Signal;
-    simsignal_t keepAliveReceived_Signal;
-    simsignal_t notInterestedSent_Signal;
-    simsignal_t notInterestedReceived_Signal;
-    simsignal_t pieceSent_Signal;
-    simsignal_t pieceReceived_Signal;
-    simsignal_t requestSent_Signal;
-    simsignal_t requestReceived_Signal;
-    simsignal_t unchokeSent_Signal;
-    simsignal_t unchokeReceived_Signal;
-    void attemptActiveConnections(Swarm & swarm, int infoHash);
-    void emitReceivedSignal(int messageId);
-    void emitSentSignal(int messageId);
-    Swarm & getSwarm(int infoHash);
-    const Swarm & getSwarm(int infoHash) const;
-    void peerWireStatistics(const cMessage *msg, bool sending);
-    void printDebugMsg(std::string s) const;
-    void printDebugMsgConnections(std ::string methodName, int infoHash, const Swarm & swarm) const;
-    void registerEmittedSignals();
+//    unsigned int prevNumUnconnected;
+//    unsigned int prevNumConnected;
+//    simsignal_t numUnconnected_Signal;
+//    simsignal_t numConnected_Signal;
+////
+//    simsignal_t processingTime_Signal;
+////
+//    simsignal_t peerWireBytesSent_Signal;
+//    simsignal_t peerWireBytesReceived_Signal;
+//    simsignal_t contentBytesSent_Signal;
+//    simsignal_t contentBytesReceived_Signal;
+////
+//    simsignal_t bitFieldSent_Signal;
+//    simsignal_t bitFieldReceived_Signal;
+//    simsignal_t cancelSent_Signal;
+//    simsignal_t cancelReceived_Signal;
+//    simsignal_t chokeSent_Signal;
+//    simsignal_t chokeReceived_Signal;
+//    simsignal_t handshakeSent_Signal;
+//    simsignal_t handshakeReceived_Signal;
+//    simsignal_t haveSent_Signal;
+//    simsignal_t haveReceived_Signal;
+//    simsignal_t interestedSent_Signal;
+//    simsignal_t interestedReceived_Signal;
+//    simsignal_t keepAliveSent_Signal;
+//    simsignal_t keepAliveReceived_Signal;
+//    simsignal_t notInterestedSent_Signal;
+//    simsignal_t notInterestedReceived_Signal;
+//    simsignal_t pieceSent_Signal;
+//    simsignal_t pieceReceived_Signal;
+//    simsignal_t requestSent_Signal;
+//    simsignal_t requestReceived_Signal;
+//    simsignal_t unchokeSent_Signal;
+//    simsignal_t unchokeReceived_Signal;
+//    void attemptActiveConnections(Swarm & swarm, int infoHash);
+//    void emitReceivedSignal(int messageId);
+//    void emitSentSignal(int messageId);
+//    Swarm & getSwarm(int infoHash);
+//    const Swarm & getSwarm(int infoHash) const;
+//    void peerWireStatistics(const cMessage *msg, bool sending);
+//    void printDebugMsg(std::string s) const;
+//    void printDebugMsgConnections(std ::string methodName, int infoHash, const Swarm & swarm) const;
+//    void registerEmittedSignals();
+
 
   protected:
     virtual int numInitStages();

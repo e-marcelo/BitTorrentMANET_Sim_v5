@@ -18,16 +18,19 @@
 
 #include <omnetpp.h>
 #include "BitTorrentClient.h"
+#include "UserCommand_m.h"
 using namespace omnetpp;
 
-/**
- * TODO - Generated class
- */
+
 class SwarmManager : public cSimpleModule
 {
-  public:
-    void treatUser(cMessage *msg);
+//  public:
+
   private:
+    //Recibiendo comando del controlador
+    void treatUser(cMessage *msg);
+    //Solicitud para unirse el enjambre
+    void enterSwarm(TorrentMetadata const& torrentInfo, bool seed,  int idDisplay);
     BitTorrentClient* bitTorrentClient;
     int localPeerId;
   protected:

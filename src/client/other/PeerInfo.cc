@@ -82,9 +82,9 @@ PeerInfo::PeerInfo() :
         peerId(-1), port(-1) {
 }
 
-PeerInfo::PeerInfo(int peerId, L3Address const& ip, int port) :
-        peerId(peerId), ip(ip), port(port), status(A_NORMAL) {
-}
+//PeerInfo::PeerInfo(int peerId, L3Address const& ip, int port) :
+//        peerId(peerId), ip(ip), port(port), status(A_NORMAL) {
+//}
 
 PeerInfo::~PeerInfo() {
 }
@@ -95,48 +95,48 @@ PeerInfo::~PeerInfo() {
  * This is a simplification to avoid having to create a peer id string following
  * the specification, which would not be useful or necessary.
  */
-std::string PeerInfo::getBencodedInfo() const {
-    std::ostringstream bencodedResponse;
-    bencodedResponse << "d7:peer_id20:_notTheActualPeerId_";
-    bencodedResponse << "2:ip" << this->ip.str().length() << ":" << this->ip;
-    bencodedResponse << "4:porti" << this->port << "ee";
-
-    return bencodedResponse.str();
-}
+//std::string PeerInfo::getBencodedInfo() const {
+//    std::ostringstream bencodedResponse;
+//    bencodedResponse << "d7:peer_id20:_notTheActualPeerId_";
+//    bencodedResponse << "2:ip" << this->ip.str().length() << ":" << this->ip;
+//    bencodedResponse << "4:porti" << this->port << "ee";
+//
+//    return bencodedResponse.str();
+//}
 
 int PeerInfo::getPeerId() const {
     return this->peerId;
 }
-L3Address const& PeerInfo::getIp() const {
-    return this->ip;
-}
+//L3Address const& PeerInfo::getIp() const {
+//    return this->ip;
+//}
 int PeerInfo::getPort() const {
     return this->port;
 }
-void PeerInfo::setStatus(AnnounceType status) {
-    this->status = status;
-}
-AnnounceType PeerInfo::getStatus() {
-    return status;
-}
-
-bool PeerInfo::operator==(PeerInfo const& peerInfo) const {
-    return ((this->peerId == peerInfo.peerId) && (this->ip == peerInfo.ip)
-            && (this->port == peerInfo.port));
-}
-bool PeerInfo::operator!=(PeerInfo const& peerInfo) const {
-    return !this->operator==(peerInfo);
-}
-bool PeerInfo::operator<(PeerInfo const& peerInfo) const {
-    return this->peerId < peerInfo.peerId || // first is less
-            (!(this->peerId < peerInfo.peerId) && this->ip < peerInfo.ip) || // first is equal, second is less
-            (!(this->peerId < peerInfo.peerId) && !(this->ip < peerInfo.ip)
-                    && this->port < peerInfo.port); // first and second are equal, third is less
-}
-
-std::ostream& operator<<(std::ostream& out, PeerInfo const& peerInfo) {
-    out << "Peer id: \"" << peerInfo.getPeerId();
-    out << "\", Ip: " << peerInfo.getIp();
-    out << ", Port: " << peerInfo.getPort();
-    return out;
-}
+//void PeerInfo::setStatus(AnnounceType status) {
+//    this->status = status;
+//}
+//AnnounceType PeerInfo::getStatus() {
+//    return status;
+//}
+//
+//bool PeerInfo::operator==(PeerInfo const& peerInfo) const {
+//    return ((this->peerId == peerInfo.peerId) && (this->ip == peerInfo.ip)
+//            && (this->port == peerInfo.port));
+//}
+//bool PeerInfo::operator!=(PeerInfo const& peerInfo) const {
+//    return !this->operator==(peerInfo);
+//}
+//bool PeerInfo::operator<(PeerInfo const& peerInfo) const {
+//    return this->peerId < peerInfo.peerId || // first is less
+//            (!(this->peerId < peerInfo.peerId) && this->ip < peerInfo.ip) || // first is equal, second is less
+//            (!(this->peerId < peerInfo.peerId) && !(this->ip < peerInfo.ip)
+//                    && this->port < peerInfo.port); // first and second are equal, third is less
+//}
+//
+//std::ostream& operator<<(std::ostream& out, PeerInfo const& peerInfo) {
+//    out << "Peer id: \"" << peerInfo.getPeerId();
+//    out << "\", Ip: " << peerInfo.getIp();
+//    out << ", Port: " << peerInfo.getPort();
+//    return out;
+//}

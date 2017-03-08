@@ -4,7 +4,7 @@ package btm.controller;
 import btm.controller.ClientController;
 import inet.networklayer.configurator.ipv4.IPv4NetworkConfigurator;
 import inet.routing.contract.IPIMRouting;
-import btm.nodes.PeerInterface;
+
 import btm.nodes.Peer;
 import inet.networklayer.configurator.ipv4.FlatNetworkConfigurator;
 
@@ -34,29 +34,24 @@ network BasicTopology extends BasicNetwork
     submodules:
         peer[numPeers]: Peer;
         configurator: IPv4NetworkConfigurator {
-            @display("p=167,102");
+            @display("p=0,0");
         }
         visualizer: IntegratedCanvasVisualizer {
             parameters:
                 @display("p=-7,9");
         }
-        visualizer: IntegratedCanvasVisualizer {
-            @display("p=1,9");
-        }
+        
         figureHelper: DelegateSignalConfigurator {
             @display("p=1,9");
         }
-        configurator: IPv4NetworkConfigurator {
-            parameters:
-                @display("p=1,9");
-        }
+   
         radioMedium: Ieee80211ScalarRadioMedium {
             parameters:
                 @display("p=0,9");
         }
 
         clientController: ClientController {
-            @display("p=38.152,40.16");
+            @display("p=39,40");
         }
     connections:
 }

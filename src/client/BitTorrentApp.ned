@@ -25,6 +25,7 @@ module BitTorrentApp
     gates:
        input tcpIn[2];
        output tcpOut[2];
+       
         
 
     submodules:
@@ -33,7 +34,6 @@ module BitTorrentApp
         }
         bitTorrentClient: BitTorrentClient {
             @display("p=68,128");
-			
         } 
 
     connections:

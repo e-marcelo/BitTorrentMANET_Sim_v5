@@ -21,28 +21,71 @@
 //[EAM]#include <IPAddressResolver.h>
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
-
-#include "Application_m.h"
-#include "PeerWire_m.h"
-#include "PeerWireMsgBundle_m.h"
-#include "PeerWireThread.h"
-#include "Choker.h"
-#include "ContentManager.h"
+//#include <UDPSocket.h>
+//#include "Application_m.h"
+//#include "PeerWire_m.h"
+//#include "PeerWireMsgBundle_m.h"
+//#include "PeerWireThread.h"
+//#include "Choker.h"
+//#include "ContentManager.h"
 #include "SwarmManager.h"
-
-
+//#include <INetworkProtocolControlInfo.h>
+using omnetpp::cSimulation;
 // Dumb fix because of the CDT parser (https://bugs.eclipse.org/bugs/show_bug.cgi?id=332278)
 #ifdef __CDT_PARSER__
 #undef BOOST_FOREACH
 #define BOOST_FOREACH(a, b) for(a; b; )
 #endif
 
+
 // Helper functions
+// helper functions in anonymous workspace
 namespace {
-std::string toStr(int i) {
-    return boost::lexical_cast<std::string>(i);
+
+//! Create ControlInfo object common to all announce messages.
+    EnterSwarmCommand createDefaultControlInfo() {
+        // these parameters are default for all announce messages sent
+        EnterSwarmCommand enterSwarmCommand;
+        // enterSwarmCommand.setTorrentMetadata(torrentMetadata);
+        return enterSwarmCommand;
+    }
+
+    //! Create the announce message that will be sent to the passed SwarmManager.
+    cMessage * createAnnounceMsg(EnterSwarmCommand const& defaultControlInfo, bool seeder, SwarmManager * swarmManager, int idDisplay) {
+        // create the message and set the control info
+        cMessage *msg = new cMessage("BitField");
+        msg->setContextPointer(swarmManager);
+        //USER_COMMAND_ENTER_SWARM -> 0
+        msg->setKind(USER_COMMAND_ENTER_SWARM); //Identificador de Semilla
+
+        //Each new message needs a new control info
+        //Update the seeder status in tje control info
+        EnterSwarmCommand *enterSwarmCommand = defaultControlInfo.dup();
+        enterSwarmCommand->setSeeder(seeder);
+        enterSwarmCommand->setIdDisplay(idDisplay);
+        msg->setControlInfo(enterSwarmCommand);
+
+        return msg;
+    }
+
+
+
+    //! Schedule the announce messages to all BitTorrent applications.
+    void scheduleStartMessages(int idNode, BitTorrentClient * self, simtime_t const& startTime,long const numSeeders,
+            EnterSwarmCommand const& defaultControlInfo) {
+        cTopology topo;
+        topo.extractByProperty("peer");
+        simtime_t enterTime = startTime;
+
+        cModule *mod = topo.getNode(idNode)->getModule()->getSubmodule("swarmManager"); //Referencia al módulo swarm de cada par
+        SwarmManager *swarmManager = (SwarmManager *)(mod);
+        bool seeder = false;
+        cMessage *msg = createAnnounceMsg(defaultControlInfo,seeder,swarmManager,idNode);
+        // The first peers set to seeders and start imediatelly
+        self->scheduleAt(enterTime, msg);
+    }
 }
-}
+
 
 Define_Module(BitTorrentClient);
 
@@ -50,44 +93,131 @@ using inet::TCPSrvHostApp;
 
 Register_Class(BitTorrentClient);
 
+void BitTorrentClient::closeConnection(int infoHash, int peerId) const {
+}
+
+void BitTorrentClient::finishedDownload(int infoHash) {
+}
+
+void BitTorrentClient::sendHaveMessages(int infoHash, int pieceIndex) const {
+}
+
+void BitTorrentClient::sendPieceMessage(int infoHash, int peerId) const {
+}
+
+int BitTorrentClient::getLocalPeerId() const {
+}
+
+void BitTorrentClient::deleteSwarm(int infoHash) {
+}
+
+void BitTorrentClient::finish() {
+}
+
+void BitTorrentClient::findLocalNeighborhood() {
+    //Considerando la posición actual del nodo, se identifica que pares se encuentran a "1-salto" (vecindario local)
+    currentPosition(this->strCurrentNode.c_str(),&(this->peerX),&(this->peerY)); //Coordenada (x,y) del nodo actual
+//    std::cerr << "Nodo :: " << this->localIdDisplay << " | Posición :: " <<  this->peerX << ", " << this->peerX <<"\n";
+    int x2;
+    int y2;
+    int peerIdNode;
+    int d = -1; //Distancia entre los pares (redondeo de entero)
+    int x_ = -1;
+    int y_ = -1;
+    int r_ = -1;
+    //Reutilizando variables
+    this->strArgNode.clear();
+    this->optNumtoStr.str("");
+
+    for(int i=0; i<this->globalNumberOfPeers; i++){
+        this->strArgNode = std::string("peer[");
+        this->optNumtoStr << i;
+        this->strArgNode.append(this->optNumtoStr.str());
+        this->strArgNode.append("]");
+        peerIdNode = getSimulation()->getModuleByPath(this->strArgNode.c_str())->getId();
+
+        if(this->localPeerId != peerIdNode){ //Cuidamos que no se trate del par actual
+            //Obtenemos coordenadas del par
+//            std::cerr << "Nodo ::: " << this->strArgNode.c_str();
+            currentPosition(this->strArgNode.c_str(),&x2,&y2);
+            //Incluir validanciones
+            x_ = std::pow((double)(x2-this->peerX),2);
+            y_ = std::pow((double)(y2-this->peerY),2);
+            d = std::sqrt((x_+y_));
+            std::cerr << this->strCurrentNode.c_str() <<" -> Distancia :: " << d << "\n";
+            //De acuerdo al umbral es como se permite el envio
+            if(d <= this->communicationRange){ //Se permite la igualdad (considerar el error de redondeo*)
+                //Enviando <<bitField>> del contenido que tiene una semilla
+                //Conexión "Hello"!
+                sendBroadcast(i);
+            }
+//          std::cerr << " | Posición :: " <<  x2 << ", " << y2 <<"\n";
+            //Distancia entre el par actual y el par que estamos visitando
+        }
+
+        this->strArgNode.clear();
+        this->optNumtoStr.str("");
+    }
+}
+
+void BitTorrentClient::currentPosition(const char* peer, int *x, int *y) {
+    //Localización del nodo actual en el escenario de simulación
+    //Leyenda del nodo actual
+    std::string pos = getSimulation()->getModuleByPath(peer)->getDisplayString().str();
+//    std::cerr << "Nodo :: " << pos <<"\n";
+    //Separador de las propiedades de la leyenda del nodo
+    boost::char_separator<char> sep(";");
+    typedef boost::tokenizer<boost::char_separator<char>> tokenizer;
+    //Recorrido entre los parámetros de la leyenda del nodo
+    tokenizer mytokenizer(pos,sep);
+    for(auto& token: mytokenizer){
+        this->strArgNode = token; //Primera posición
+        break;
+
+    }
+
+    //    std::cerr << "Nodo :: " << this->idDisplay << " | Posición :: " <<  this->newArg <<"\n";
+    //Separando coordenadas (x,y) del nodo actual de acuerdo a su leyenda en el escenario de simulación
+    boost::char_separator<char> sepA("=");
+    tokenizer mytokenizerA(this->strArgNode,sepA);
+    //Posicion del par
+    for(auto& token: mytokenizerA){
+        pos = token; //Última posición
+    }
+    //Posicion en X , Y
+    boost::char_separator<char> sepB(",");
+    tokenizer mytokenizerB(pos,sepB);
+    //Contador a cero (para reutilizarlo)
+    this->count = 0;
+    for(auto& token: mytokenizerB){
+        if(this->count == 0){
+            this->strArgNode = token;
+            *x = std::atoi(this->strArgNode.c_str());
+        }else{
+            this->strArgNode = token;
+            *y = std::atoi(this->strArgNode.c_str());
+        }
+        this->count++; //Solo dos posiciones son consideradas
+    }
+    //Variables reutilizables
+    this->count = 0;
+    this->strArgNode.clear();
+    //    std::cerr << "Nodo :: " << this->localIdDisplay << " | Posición :: " <<  this->peerX << ", " << this->peerY <<"\n";
+
+}
 
 void BitTorrentClient::initialize(int stage)
 {
-//    if (stage == 0) {
-//        this->registerEmittedSignals();
-//    } else if (stage == 3) {
-//    // create a listening connection
-//    TCPSrvHostApp::initialized();
-//    //this->swarmManager = check_and_cast<SwarmManager*>(getParentModule()->getSubmodule("swarmManager"));
-      this->localPeerId = this->getParentModule()->getParentModule()->getId();
-//
-//    // get parameters from the modules
-//    this->snubbedInterval = par("snubbedInterval");
-//    this->timeoutInterval = par("timeoutInterval");
-//    this->keepAliveInterval = par("keepAliveInterval");
-//    //        this->oldUnchokeInterval = par("oldUnchokeInterval");
-//    this->downloadRateInterval = par("downloadRateInterval");
-//    this->uploadRateInterval = par("uploadRateInterval");
-//    this->globalNumberOfPeers = par("globalNumberOfPeers"); //FIXME use this!
-//    this->numActiveConn = par("numberOfActivePeers");
-//    this->numPassiveConn = par("numberOfPassivePeers");
-//
-//    //IPAddressResolver resolver;
-//    //this->localIp = resolver.addressOf(getParentModule()->getParentModule(),IPAddressResolver::ADDR_PREFER_IPv4);
-     this->localPort = par("localPort");
-//
-//    this->subModulesDebugFlag = par("subModulesDebugFlag").boolValue();
-//    this->debugFlag = par("debugFlag").boolValue();
-//
-//    char const* histogramFileName = par("processingTimeHistogram");
-//    FILE * histogramFile = fopen(histogramFileName, "r");
-//    if (histogramFile == NULL) {
-//        throw std::invalid_argument("Histogram file not found");
-//    } else {
-//        this->doubleProcessingTimeHist.loadFromFile(histogramFile);
-//        fclose(histogramFile);
-//    }
-//}
+
+      if (stage == 3) {
+           // create a listening connection
+          TCPSrvHostApp::initialized();
+          this->swarmManager = check_and_cast<SwarmManager*>(getParentModule()->getSubmodule("swarmManager"));
+          this->localPeerId = this->getParentModule()->getParentModule()->getId();
+          this->localPort = par("localPort");
+          this->globalNumberOfPeers = par("globalNumberOfPeers");
+          this->communicationRange = par("communicationRange");
+      }
 
 }
 
@@ -99,221 +229,55 @@ BitTorrentClient::BitTorrentClient()/*: endOfProcessingTimer("End of processing"
 
 BitTorrentClient::~BitTorrentClient() {
 }
-//
-void BitTorrentClient::unchokePeer(int infoHash, int peerId) {
-}
-//
-void BitTorrentClient::closeConnection(int infoHash, int peerId) const {
-}
-//
-void BitTorrentClient::finishedDownload(int infoHash) {
-}
-//
-void BitTorrentClient::peerInteresting(int infoHash, int peerId) const {
-}
-//
-void BitTorrentClient::peerNotInteresting(int infoHash, int peerId) const {
-}
-//
-void BitTorrentClient::sendHaveMessages(int infoHash, int pieceIndex) const {
-}
-//
-void BitTorrentClient::sendPieceMessage(int infoHash, int peerId) const {
-}
-//
-double BitTorrentClient::updateUploadRate(int infoHash, int peerId,
-        unsigned long totalUploaded) {
-}
-//
-int BitTorrentClient::getLocalPeerId() const {
-}
-//
 void BitTorrentClient::createSwarm(int infoHash, int numOfPieces,
-        int numOfSubPieces, int subPieceSize, bool newSwarmSeeding) {
-    TCPSocket * socket = new TCPSocket();
-    cMessage *msg = new cMessage("Hello");
-    socket->setOutputGate(gate("tcpOut"));
-    socket->readDataTransferModePar(*this);
+        int numOfSubPieces, int subPieceSize, bool newSwarmSeeding, int idDisplay) {
+//        Enter_Method("addSwarm(infoHash: %d, %d)", infoHash, newSwarmSeeding);
+        Enter_Method_Silent();
+        //Configurar arreglo con el contenido digital
+        this->localIdDisplay = idDisplay;
+        //Cadena de caracteres que identifica al nodo en el escenario de simulación
+        this->strCurrentNode = std::string("peer[");
+        this->optNumtoStr << idDisplay;
+        this->strCurrentNode.append(this->optNumtoStr.str());
+        this->strCurrentNode.append("]");
+//        std::cerr << this->strCurrentNode <<"\n";
 
-    //Iniciando prueba de conexión TCP
-    L3Address addressA = L3AddressResolver().resolve("peer[1]", L3AddressResolver::ADDR_IPv4);
-    L3Address addressB = L3AddressResolver().resolve("peer[2]", L3AddressResolver::ADDR_IPv4);
-//
-    std::cerr << addressA.str() << "\n";
-    std::cerr << addressB.str() << "\n";
-
-    socket->connect(addressA,this->localPort);
-    socket->send(msg);
-    socket->connect(addressB,this->localPort);
-    socket->send(msg);
-
-}
-//
-void BitTorrentClient::deleteSwarm(int infoHash) {
-}
-//
-bool BitTorrentClient::canConnect(int infoHash, int peerId, bool active) const {
-}
-//
-void BitTorrentClient::processNextThread() {
-    // allThreads will never be empty here
-    assert(!this->allThreads.empty());
-
-    std::list<PeerWireThread*>::iterator nextThreadIt =
-        this->threadInProcessingIt;
-
-    // don't start processing another thread if the current one is still processing
-    if (!(*this->threadInProcessingIt)->busy
-        && !this->endOfProcessingTimer.isScheduled()) {
-        // increment the nextThreadIt until a thread with messages is found or
-        // until a full circle is reached
-        bool hasMessages = false;
-#ifdef DEBUG_MSG
-        std::ostringstream out;
-        out << "== Next thread: ";
-        out << (*nextThreadIt)->getThreadId();
-#endif
-        do {
-            ++nextThreadIt;
-            if (nextThreadIt == this->allThreads.end()) {
-                nextThreadIt = this->allThreads.begin();
-            }
-#ifdef DEBUG_MSG
-            out << " > " << (*nextThreadIt)->getThreadId();
-#endif
-            hasMessages = (*nextThreadIt)->hasMessagesToProcess();
-        } while (nextThreadIt != this->threadInProcessingIt && !hasMessages);
-#ifdef DEBUG_MSG
-        out << " ==";
-#endif
-
-        if (hasMessages) {
-#ifdef DEBUG_MSG
-            this->printDebugMsg(out.str());
-#endif
-            this->threadInProcessingIt = nextThreadIt;
-            simtime_t processingTime =
-                (*this->threadInProcessingIt)->startProcessing();
-            emit(this->processingTime_Signal, processingTime);
-            this->scheduleAt(simTime() + processingTime,
-                &this->endOfProcessingTimer);
-#ifdef DEBUG_MSG
-        } else {
-            std::string out_str = "== Thread " + (*nextThreadIt)->getThreadId()
-                + " idle ==";
-            this->printDebugMsg(out_str);
-#endif
+        if(newSwarmSeeding){ //
+//            this->localPeerId = infoHash;
+            std::cerr << "Soy semilla \t -> ";
+            findLocalNeighborhood();
+//            helloMsgTimer = new cMessage("HelloMsgTimer");
+//            scheduleAt(simTime() + 10, helloMsgTimer);
         }
-    }
+//        currentPosition(this->strCurrentNode.c_str(),&(this->peerX),&(this->peerY)); //Coordenada (x,y) del nodo actual
+//        std::cerr << "Nodo :: " << this->localIdDisplay << " | Posición :: " <<  this->peerX << ", " << this->peerX <<"\n";
+
+
 }
-//
-void BitTorrentClient::removePeerFromSwarm(int infoHash, int peerId, int connId,
-        bool active) {
-}
-//
-void BitTorrentClient::setInterested(bool interested, int infoHash,
-        int peerId) {
-}
-//
-void BitTorrentClient::setOldUnchoked(bool oldUnchoke, int infoHash,
-        int peerId) {
-}
-//
-void BitTorrentClient::setSnubbed(bool snubbed, int infoHash, int peerId) {
-}
-//
-void BitTorrentClient::attemptActiveConnections(Swarm& swarm, int infoHash) {
-}
-//
-void BitTorrentClient::emitReceivedSignal(int messageId) {
-}
-//
-void BitTorrentClient::emitSentSignal(int messageId) {
-}
-//
-Swarm& BitTorrentClient::getSwarm(int infoHash) {
-}
-//
-const Swarm& BitTorrentClient::getSwarm(int infoHash) const {
-}
-//
-void BitTorrentClient::peerWireStatistics(const cMessage* msg, bool sending) {
-}
-//
-void BitTorrentClient::printDebugMsg(std::string s) const {
-}
-//
-void BitTorrentClient::printDebugMsgConnections(std::string methodName,
-        int infoHash, const Swarm& swarm) const {
-}
-//
-void BitTorrentClient::registerEmittedSignals() {
-}
-//
-int BitTorrentClient::numInitStages() {
-}
-//
-void BitTorrentClient::finish() {
-}
-//
+
 void BitTorrentClient::handleMessage(cMessage *msg)
 {
-//    // TODO - Generated method body
-}
-PeerStatus & BitTorrentClient::getPeerStatus(int infoHash, int peerId) {
-    Swarm & swarm = this->getSwarm(infoHash);
-    assert(swarm.peerMap.count(peerId));
-    return swarm.peerMap.at(peerId);
-}
-// Methods used by the Choker
-void BitTorrentClient::chokePeer(int infoHash, int peerId) {
-//    Enter_Method("chokePeer(infoHash: %d, peerId: %d)", infoHash, peerId);
-
-    PeerStatus & peer = this->getPeerStatus(infoHash, peerId);
-    if (peer.isUnchoked()) {
-        peer.setUnchoked(false, simTime());
-        peer.getThread()->sendApplicationMessage(APP_CHOKE_PEER);
+    if (!msg->isSelfMessage()) {
+                std::cerr << "Error BitTorrentClient :: This module doesn't process messages\n";
+    }
+    cModule *mod = (cModule *) msg->getContextPointer();
+    if (mod == NULL) {
+        std::cerr <<"Módulo SwarmManager, no encontrado\n"; //Cambiar al modulo BitTorrent
+        EV << "Módulo SwarmManager, no encontrado\n";
+    }else{
+        sendDirect(msg, mod, "peerBitField");
     }
 }
 
-PeerVector BitTorrentClient::getFastestToDownload(int infoHash) const {
-//    Enter_Method("getFastestToDownload(infoHash: %d)", infoHash);
-    Swarm const& swarm = this->getSwarm(infoHash);
-    PeerMap const& peerMap = swarm.peerMap;
-    PeerVector orderedPeers;
-    if (peerMap.size()) {
-        orderedPeers.reserve(peerMap.size());
-        PeerMapConstIt it = peerMap.begin();
-        int i = 0;
-        for (; it != peerMap.end(); ++it) {
-            PeerStatus const* peerStatus = &it->second;
-            orderedPeers.push_back(peerStatus);
-        }
+void BitTorrentClient::sendBroadcast(int idNode/*cPacket *packet, const L3Address& destAddr, unsigned int timeToLive, double delay*/)
+{
+    //1.- Descubrir vecinos a un salto
+    //2.- Conectar y enviar mensaje a los vecinos (prueba)
+    EnterSwarmCommand const& defaultControlInfo = createDefaultControlInfo();
+    scheduleStartMessages(idNode,this, simTime()+3,0,defaultControlInfo);
+    //
 
-        // Order from lowest to largest, and we want the reverse order
-        std::sort(orderedPeers.rbegin(), orderedPeers.rend(),
-            PeerStatus::sortByDownloadRate);
-    }
-
-    return orderedPeers;
 }
-PeerVector BitTorrentClient::getFastestToUpload(int infoHash) const {
-//    Enter_Method("getFastestToUpload(infoHash: %d)", infoHash);
-    Swarm const& swarm = this->getSwarm(infoHash);
-    PeerMap const& peerMap = swarm.peerMap;
-    int peerMapSize = peerMap.size();
-    PeerVector orderedPeers;
-    if (peerMapSize) {
-        orderedPeers.reserve(peerMapSize);
-        PeerMapConstIt it = peerMap.begin();
-        for (; it != peerMap.end(); ++it) {
-            PeerStatus const* peerStatus = &it->second;
-            orderedPeers.push_back(peerStatus);
-        }
 
-        std::sort(orderedPeers.rbegin(), orderedPeers.rend(),
-            PeerStatus::sortByUploadRate);
-    }
-
-    return orderedPeers;
+int BitTorrentClient::numInitStages() {
 }
