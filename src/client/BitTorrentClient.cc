@@ -46,6 +46,7 @@ namespace {
     EnterSwarmCommand createDefaultControlInfo() {
         // these parameters are default for all announce messages sent
         EnterSwarmCommand enterSwarmCommand;
+
         // enterSwarmCommand.setTorrentMetadata(torrentMetadata);
         return enterSwarmCommand;
     }
@@ -144,12 +145,12 @@ void BitTorrentClient::findLocalNeighborhood() {
             x_ = std::pow((double)(x2-this->peerX),2);
             y_ = std::pow((double)(y2-this->peerY),2);
             d = std::sqrt((x_+y_));
-            std::cerr << this->strCurrentNode.c_str() <<" -> Distancia :: " << d << "\n";
+//            std::cerr << this->strCurrentNode.c_str() <<" -> Distancia :: " << d << "\n";
             //De acuerdo al umbral es como se permite el envio
             if(d <= this->communicationRange){ //Se permite la igualdad (considerar el error de redondeo*)
                 //Enviando <<bitField>> del contenido que tiene una semilla
                 //Conexión "Hello"!
-                sendBroadcast(i);
+                sendBroadcast(i); //Enviar pieza
             }
 //          std::cerr << " | Posición :: " <<  x2 << ", " << y2 <<"\n";
             //Distancia entre el par actual y el par que estamos visitando
@@ -224,6 +225,7 @@ void BitTorrentClient::initialize(int stage)
 BitTorrentClient::BitTorrentClient()/*: endOfProcessingTimer("End of processing"), doubleProcessingTimeHist(
 "Piece processing time histogram"), snubbedInterval(0), timeoutInterval(0), keepAliveInterval(0), downloadRateInterval(0), uploadRateInterval(0), localPort(-1), localPeerId(-1), debugFlag(false), globalNumberOfPeers(0), numActiveConn(0), numPassiveConn(0), prevNumUnconnected(0), prevNumConnected(0) */
 {
+
 }
 
 
@@ -241,16 +243,24 @@ void BitTorrentClient::createSwarm(int infoHash, int numOfPieces,
         this->strCurrentNode.append(this->optNumtoStr.str());
         this->strCurrentNode.append("]");
 //        std::cerr << this->strCurrentNode <<"\n";
-
+        //Creación del bitField
+        this->clientBitField = BitField(numOfPieces,newSwarmSeeding);
         if(newSwarmSeeding){ //
 //            this->localPeerId = infoHash;
-            std::cerr << "Soy semilla \t -> ";
+//            std::cerr << "Soy semilla \t -> ";
             findLocalNeighborhood();
 //            helloMsgTimer = new cMessage("HelloMsgTimer");
 //            scheduleAt(simTime() + 10, helloMsgTimer);
         }
-//        currentPosition(this->strCurrentNode.c_str(),&(this->peerX),&(this->peerY)); //Coordenada (x,y) del nodo actual
-//        std::cerr << "Nodo :: " << this->localIdDisplay << " | Posición :: " <<  this->peerX << ", " << this->peerX <<"\n";
+//        if(this->clientBitField.hasPiece(1)){
+//            std::cerr << "Si tengo pieza 1 \n";
+//        }else{
+//            std::cerr << "No tengo pieza 1 \n";
+//        }
+
+//      std::cerr << "BitField :: " << this->strCurrentNode << " :: " << this->clientBitField.getCompletedPercentage() << "\n";
+//      currentPosition(this->strCurrentNode.c_str(),&(this->peerX),&(this->peerY)); //Coordenada (x,y) del nodo actual
+//      std::cerr << "Nodo :: " << this->localIdDisplay << " | Posición :: " <<  this->peerX << ", " << this->peerX <<"\n";
 
 
 }
@@ -273,6 +283,9 @@ void BitTorrentClient::sendBroadcast(int idNode/*cPacket *packet, const L3Addres
 {
     //1.- Descubrir vecinos a un salto
     //2.- Conectar y enviar mensaje a los vecinos (prueba)
+    //Enviar pieza
+    //this->clientBitField.getBitFieldPieces();
+
     EnterSwarmCommand const& defaultControlInfo = createDefaultControlInfo();
     scheduleStartMessages(idNode,this, simTime()+3,0,defaultControlInfo);
     //

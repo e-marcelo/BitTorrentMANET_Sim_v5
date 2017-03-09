@@ -1,15 +1,15 @@
-file 8658 1488938369                                            
+                                                                
 version 2
-run Test-0-20170307-19:58:03-11787
+run Test-0-20170308-20:48:11-6417
 attr configname Test
-attr datetime 20170307-19:58:03
+attr datetime 20170308-20:48:11
 attr experiment Test
 attr inifile BasicConfig.ini
 attr iterationvars ""
 attr iterationvars2 $repetition=0
 attr measurement ""
 attr network BasicTopology
-attr processid 11787
+attr processid 6417
 attr repetition 0
 attr replication #0
 attr resultdir results
@@ -101,126 +101,3 @@ attr interpolationmode  sample-hold
 attr source  radioModeChanged
 attr title  "Radio mode, vector"
 vector 9  BasicTopology.peer[0].wlan[0].radio  radioChannel:vector  ETV
-attr interpolationmode  sample-hold
-attr source  radioChannelChanged
-attr title  "Radio channel, vector"
-vector 17  BasicTopology.peer[1].wlan[0].radio  radioMode:vector  ETV
-attr interpolationmode  sample-hold
-attr source  radioModeChanged
-attr title  "Radio mode, vector"
-vector 20  BasicTopology.peer[1].wlan[0].radio  radioChannel:vector  ETV
-attr interpolationmode  sample-hold
-attr source  radioChannelChanged
-attr title  "Radio channel, vector"
-vector 28  BasicTopology.peer[2].wlan[0].radio  radioMode:vector  ETV
-attr interpolationmode  sample-hold
-attr source  radioModeChanged
-attr title  "Radio mode, vector"
-vector 31  BasicTopology.peer[2].wlan[0].radio  radioChannel:vector  ETV
-attr interpolationmode  sample-hold
-attr source  radioChannelChanged
-attr title  "Radio channel, vector"
-vector 39  BasicTopology.peer[3].wlan[0].radio  radioMode:vector  ETV
-attr interpolationmode  sample-hold
-attr source  radioModeChanged
-attr title  "Radio mode, vector"
-vector 42  BasicTopology.peer[3].wlan[0].radio  radioChannel:vector  ETV
-attr interpolationmode  sample-hold
-attr source  radioChannelChanged
-attr title  "Radio channel, vector"
-vector 50  BasicTopology.peer[4].wlan[0].radio  radioMode:vector  ETV
-attr interpolationmode  sample-hold
-attr source  radioModeChanged
-attr title  "Radio mode, vector"
-vector 53  BasicTopology.peer[4].wlan[0].radio  radioChannel:vector  ETV
-attr interpolationmode  sample-hold
-attr source  radioChannelChanged
-attr title  "Radio channel, vector"
-vector 61  BasicTopology.peer[5].wlan[0].radio  radioMode:vector  ETV
-attr interpolationmode  sample-hold
-attr source  radioModeChanged
-attr title  "Radio mode, vector"
-vector 64  BasicTopology.peer[5].wlan[0].radio  radioChannel:vector  ETV
-attr interpolationmode  sample-hold
-attr source  radioChannelChanged
-attr title  "Radio channel, vector"
-vector 72  BasicTopology.peer[6].wlan[0].radio  radioMode:vector  ETV
-attr interpolationmode  sample-hold
-attr source  radioModeChanged
-attr title  "Radio mode, vector"
-vector 75  BasicTopology.peer[6].wlan[0].radio  radioChannel:vector  ETV
-attr interpolationmode  sample-hold
-attr source  radioChannelChanged
-attr title  "Radio channel, vector"
-vector 83  BasicTopology.peer[7].wlan[0].radio  radioMode:vector  ETV
-attr interpolationmode  sample-hold
-attr source  radioModeChanged
-attr title  "Radio mode, vector"
-vector 86  BasicTopology.peer[7].wlan[0].radio  radioChannel:vector  ETV
-attr interpolationmode  sample-hold
-attr source  radioChannelChanged
-attr title  "Radio channel, vector"
-vector 7  BasicTopology.peer[0].wlan[0].radio  receptionState:vector  ETV
-attr interpolationmode  sample-hold
-attr source  receptionStateChanged
-attr title  "Radio reception state, vector"
-vector 18  BasicTopology.peer[1].wlan[0].radio  receptionState:vector  ETV
-attr interpolationmode  sample-hold
-attr source  receptionStateChanged
-attr title  "Radio reception state, vector"
-vector 29  BasicTopology.peer[2].wlan[0].radio  receptionState:vector  ETV
-attr interpolationmode  sample-hold
-attr source  receptionStateChanged
-attr title  "Radio reception state, vector"
-vector 40  BasicTopology.peer[3].wlan[0].radio  receptionState:vector  ETV
-attr interpolationmode  sample-hold
-attr source  receptionStateChanged
-attr title  "Radio reception state, vector"
-vector 51  BasicTopology.peer[4].wlan[0].radio  receptionState:vector  ETV
-attr interpolationmode  sample-hold
-attr source  receptionStateChanged
-attr title  "Radio reception state, vector"
-vector 62  BasicTopology.peer[5].wlan[0].radio  receptionState:vector  ETV
-attr interpolationmode  sample-hold
-attr source  receptionStateChanged
-attr title  "Radio reception state, vector"
-vector 73  BasicTopology.peer[6].wlan[0].radio  receptionState:vector  ETV
-attr interpolationmode  sample-hold
-attr source  receptionStateChanged
-attr title  "Radio reception state, vector"
-vector 84  BasicTopology.peer[7].wlan[0].radio  receptionState:vector  ETV
-attr interpolationmode  sample-hold
-attr source  receptionStateChanged
-attr title  "Radio reception state, vector"
-6	8086 16 0 0 0 0 2 0 2 2 4
-7	8102 8 0 0 0 0 1 1 1 1 1
-9	8110 8 0 0 0 0 1 0 0 0 0
-10	8118 36 0 0 0 0 4 0 0 0 0
-17	8154 18 0 0 0 0 2 0 2 2 4
-18	8172 9 0 0 0 0 1 1 1 1 1
-20	8181 9 0 0 0 0 1 0 0 0 0
-21	8190 36 0 0 0 0 4 0 0 0 0
-28	8226 18 0 0 0 0 2 0 2 2 4
-29	8244 9 0 0 0 0 1 1 1 1 1
-31	8253 9 0 0 0 0 1 0 0 0 0
-32	8262 36 0 0 0 0 4 0 0 0 0
-39	8298 18 0 0 0 0 2 0 2 2 4
-40	8316 9 0 0 0 0 1 1 1 1 1
-42	8325 9 0 0 0 0 1 0 0 0 0
-43	8334 36 0 0 0 0 4 0 0 0 0
-50	8370 18 0 0 0 0 2 0 2 2 4
-51	8388 9 0 0 0 0 1 1 1 1 1
-53	8397 9 0 0 0 0 1 0 0 0 0
-54	8406 36 0 0 0 0 4 0 0 0 0
-61	8442 18 0 0 0 0 2 0 2 2 4
-62	8460 9 0 0 0 0 1 1 1 1 1
-64	8469 9 0 0 0 0 1 0 0 0 0
-65	8478 36 0 0 0 0 4 0 0 0 0
-72	8514 18 0 0 0 0 2 0 2 2 4
-73	8532 9 0 0 0 0 1 1 1 1 1
-75	8541 9 0 0 0 0 1 0 0 0 0
-76	8550 36 0 0 0 0 4 0 0 0 0
-83	8586 18 0 0 0 0 2 0 2 2 4
-84	8604 9 0 0 0 0 1 1 1 1 1
-86	8613 9 0 0 0 0 1 0 0 0 0
-87	8622 36 0 0 0 0 4 0 0 0 0

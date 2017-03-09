@@ -165,6 +165,7 @@ $O/client/BitTorrentClient.o: client/BitTorrentClient.cc \
 	client/BitTorrentClient.h \
 	client/SwarmManager.h \
 	client/messages/UserCommand_m.h \
+	client/other/BitField.h \
 	client/other/PeerInfo.h \
 	controller/ClientController.h \
 	$(INET_PROJ)/src/inet/applications/tcpapp/TCPSrvHostApp.h \
@@ -193,6 +194,7 @@ $O/client/SwarmManager.o: client/SwarmManager.cc \
 	client/BitTorrentClient.h \
 	client/SwarmManager.h \
 	client/messages/UserCommand_m.h \
+	client/other/BitField.h \
 	client/other/PeerInfo.h \
 	controller/ClientController.h \
 	$(INET_PROJ)/src/inet/applications/tcpapp/TCPSrvHostApp.h \

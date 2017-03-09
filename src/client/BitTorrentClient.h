@@ -28,6 +28,7 @@ using namespace omnetpp;
 #include <L3AddressResolver.h>
 using inet::TCPSrvHostApp;
 #include <boost/tuple/tuple_comparison.hpp>
+#include "BitField.h"
 //Separador de cadenas (para ubicar a cada nodo de acuerdo a su identificador en el escenario de simulación)
 #include <boost/tokenizer.hpp>
 using boost::tuple;
@@ -40,7 +41,7 @@ using inet::L3AddressResolver;
 //class PeerInfo;
 //class PeerWireThread;
 class SwarmManager;
-
+class BitFieldMsg;
 //class Choker;
 //class ContentManager;
 
@@ -106,6 +107,9 @@ class BitTorrentClient : public TCPSrvHostApp
 //    void processNextThread();
 
   private:
+    //Variable para el manejo de la pieza
+    BitField clientBitField;
+
     std::string strCurrentNode;
     std::string strArgNode;
     std::ostringstream optNumtoStr;
